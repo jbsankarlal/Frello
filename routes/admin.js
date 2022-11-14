@@ -308,27 +308,29 @@ router.get('/adminLogout',function(req, res) {
 
 // <-------------------orders------------------>
 router.get('/orderMan', async (req,res,next)=>{
-
+ if(!req.query.id){
+  req.query.id=1
+ }
   let totalproducts=await productHelper.totalOdrCount()
+  console.log(totalproducts,"ajuwaa");
   let pageCount=Math.ceil(totalproducts/8)
+  console.log(pageCount,"pagecount");
   let count=[]
   for(i=1;i<=pageCount;i++){
    count.push(i)
   }
   console.log(count,"coiunt");
-  let orders=await productHelper.getOdrManDetails(req.query.id)
-  
-console.log(req.query.id,"reqqueryid");
+  console.log(req.query.id,"ajuwalaaaaaaa");
 
-productHelper.getAllOrders().then((order)=>{
+productHelper.getAllOrders(req.query.id).then((order)=>{
+ 
+order.forEach(order => {
+order.date = order.date.toString().substr(0, 10)
 
-orders.forEach(orders => {
-orders.date = orders.date.toString().substr(0, 10)
-console.log(orders,"orderssssssssssssssssssssssssssss");
 
   });
 
-res.render('pages/admin-order',{layout:'adminLayout',orders,order,count})
+res.render('pages/admin-order',{layout:'adminLayout',order,count})
 })
   })
 

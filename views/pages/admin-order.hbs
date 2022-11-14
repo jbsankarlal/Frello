@@ -170,9 +170,9 @@
                                             <td style="color: yellow;">{{this.mobile}}</td>
                                             <td>{{this.item}}</td>
                                             <td>{{this.paymentMathod}}</td>
-                                            <td>{{this.GrandTotal}}</td>
+                                            <td>{{this.frelloPrice}}</td>
                                             <td>
-                                                <select onchange="changeStatus('{{this._id}}','{{this.GrandTotal}}','{{this.userId}}','{{this.paymentMathod}}')" name="orderstatus" id="{{this._id}}">
+                                                <select onchange="changeStatus('{{this.item}}','{{this.frelloPrice}}','{{this.userId}}','{{this.paymentMathod}}')" name="orderstatus" id="{{this.item}}">
                                                     <option selected value="{{this.status}}" class="text-success">{{this.status}}</option>
                                                     <option value="Placed">Placed</option>
                                                     <option value="Despatched">Despatched</option>

@@ -121,7 +121,9 @@ getAllCategory:()=>{
 //     resolve(orders)
 //   })
 // },
-getAllOrders:()=>{
+getAllOrders:(page)=>{
+  console.log(page,"pageajuuuuuuuuuuuuuuuu");
+  let skip=(parseInt(page)-1)*8
   return new Promise(async(resolve,reject)=>{
     let orders= await db.get().collection('order').aggregate([
       {
@@ -131,8 +133,18 @@ getAllOrders:()=>{
         $unwind:'$deliveryDetails'
       },
       {
-        $project:{invoice:'$products.invoice',date:1,name:'$deliveryDetails.name',mobile:'$deliveryDetails.mobile',item:'$products.item',quantity:'$products.quantity',GrandTotal:1,paymentMathod:1,status:'$products.status'}
+        $project:{invoice:'$products.invoice',date:1,name:'$deliveryDetails.name',mobile:'$deliveryDetails.mobile',item:'$products.item',quantity:'$products.quantity',frelloPrice:'$products.frelloPrice',paymentMathod:1,userId:1,status:'$products.status'}
+      },
+      {
+         $sort:{date:-1}
+      },
+      {
+        $skip:skip
+      },
+      {
+        $limit:8
       }
+      
     ]).toArray()
     console.log(orders,"ordersss");
     resolve(orders)
@@ -236,7 +248,7 @@ unblockUser:(Id)=>{
   })
 },
 
-updateOrderStatus:(data)=>{
+ updateOrderStatus:(data)=>{
   let totalAmt
   console.log(data,"kalooo guys");
   let Placed
@@ -476,23 +488,31 @@ getProdManDetails:(page)=>{
 },
 
 totalOdrCount:()=>{
-  return new Promise((resolve,reject)=>{
-    db.get().collection('order').find().count().then((userCount)=>{
-        resolve(userCount)
-    })
-  })
+  return new Promise(async(resolve,reject)=>{
+   let userCount= await db.get().collection('order').aggregate([
+    {
+      $unwind:'$products'
+    },
+    {
+      $count:"tytytytyty"
+    }
+  
+  ]).toArray()
+      resolve(userCount[0].tytytytyty)
+   })
+  
  
 },
-getOdrManDetails:(page)=>{
-  return new Promise(async(resolve,reject)=>{
+// getOdrManDetails:(page)=>{
+//   return new Promise(async(resolve,reject)=>{
     
-      let skip=(parseInt(page)-1)*8
-      console.log(skip,"jellele",page);
-      let users= await db.get().collection('order').find().sort({date:-1}).skip(skip).limit(8).toArray()
-      resolve(users)
+//       let skip=(parseInt(page)-1)*8
+//       console.log(skip,"jellele",page);
+//       let users= await db.get().collection('order').find().sort({date:-1}).skip(skip).limit(8).toArray()
+//       resolve(users)
 
-  })
-} 
+//   })
+// } 
 
 
 }

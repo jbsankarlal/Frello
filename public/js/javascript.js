@@ -1,14 +1,14 @@
-function changeStatus(orderId,amount,userId,PM){
-    console.log(amount,"kaloooo")
-    let stat=document.getElementById(orderId)
+function changeStatus(pId,frelloPrice,userId,PM){
+   console.log(pId,frelloPrice,userId,PM)
+    let stat=document.getElementById(pId)
     let statt=stat.options[stat.selectedIndex].text
     
     $.ajax({
         url: "/admin/update-order-status",
         data:{
-            cartId:orderId,
+            cartId:pId,
             status:statt,
-            orderAmt:amount,
+            orderAmt:frelloPrice,
             user:userId,
             payMethod:PM
 

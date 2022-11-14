@@ -846,7 +846,7 @@ module.exports={
                 }
                 
             ]).toArray()
-            resolve(paypal[0].sum)
+            resolve(paypal)
             
         })
     },
