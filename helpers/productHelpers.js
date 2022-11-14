@@ -354,8 +354,6 @@ unblockUser:(Id)=>{
 },
 
 
-
-
 getAllTheOrders:()=>{
   return new Promise(async(resolve,reject)=>{
     let order= await db.get().collection('order').find().sort({date:-1}).limit(5).toArray()
