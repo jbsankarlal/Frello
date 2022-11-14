@@ -1,0 +1,52 @@
+<section class=" gradient-custom">
+  <div class="container py-5 ">
+    <div class="row d-flex justify-content-center align-items-center">
+      <div class="col-lg-10 col-xl-8">
+        <div class="card" style="border-radius: 10px;">
+          <div class="card-header px-4 py-3">
+            <h2 class="text-center font-weight-bold mb-0" style="color: #eb4b07;">WISH LIST</h2>
+          </div>
+          <div class="card-body p-4">
+            
+            {{#each wishlist}}
+            <div class="card shadow-0 border mb-4">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-2">
+                    <a title="View Details" href="/detailProd?id={{this.products._id}}"><img src="/product-imgs/{{this.products._id}}.jpg" alt="" style="height: 100px ;width:100px"
+                      class="img-fluid" alt="Phone"></a>
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0">{{this.products.prodName}}</p>
+                  </div>
+                  
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0 small">{{this.quantity}}</p>
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0 small mr-2">₹{{this.products.prodSellPrice}}</p><br>
+                    <p class="text-muted mb-0 small"><del>₹{{this.products.prodMarketPrice}} </del></p>
+                  </div>
+                  <div class="col-md-3 text-center d-flex justify-content-center align-items-center">
+                    <a href="/add2cart/{{this.products._id}}" class="btn btn-success">Add to Cart</a>
+                  </div>
+                  <div class="col-md-1 text-center d-flex justify-content-center align-items-center">
+                    <a href="/delete-from-list/{{this.products._id}}" role="button"><span class="bi bi-trash" style="color: red;"></span></a>
+                  </div>
+                </div>
+                
+               
+                
+              </div>
+            </div>
+            {{/each}}
+            
+
+           
+
+         
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

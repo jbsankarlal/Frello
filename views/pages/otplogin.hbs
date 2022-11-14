@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header Section Begin -->
+    
+    <!-- Header End -->
+
+    <!-- Breadcrumb Section Begin -->
+    <div class="breacrumb-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb-text">
+                        <a href="/"><i class="fa fa-home"></i> Home</a>
+                        <span>OTP Login</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb Form Section Begin -->
+
+    <!-- Register Section Begin -->
+    <div class="register-login-section spad">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 offset-lg-3">
+                    <div class="login-form">
+                        <h2>OTP Login</h2>
+                       
+                            {{#if otpsend}}
+
+          <form class="mb-3" action="/verifyotp" method="post">
+
+            <div class="mb-3">
+              <label class="form-label">OTP</label>
+              <input type="password" class="form-control" name="otp"
+                placeholder="Enter OTP recieved in your registered mobile" autofocus />
+            </div>
+            <div class="mb-3">
+              <button class="btn btn-primary d-grid w-100" type="submit">Submit
+              </button>
+              {{#if loginErr}}
+              <p id="successMessage" class="error text-danger">{{loginErr}}</p>
+              {{/if}}
+            </div>
+          </form>
+          {{else}}
+
+          <form class="mb-3" action="/otploggin" method="post">
+            <div class="mb-3">
+              <label class="form-label">Mobile</label>
+              <input type="text" class="form-control" name="mobile" placeholder="Enter your Mobile Number to get OTP"
+                onkeyup="validateMobile()" id="contact-mobile" autofocus />
+            </div>
+            <span id="mobile-error" class="text-danger"></span>
+            <div class="mb-3 form-password-toggle">
+              <div class="d-flex justify-content-between">
+                
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <button class="btn btn-primary d-grid w-100" type="submit" onclick="return validateLoginForm()">GET OTP
+              </button>
+              <span id="submit-error" class="text-danger"></span>
+              {{#if loginErr}}
+              <p id="successMessage" class="error text-danger">{{loginErr}}</p>
+              {{/if}}
+              {{#if logErr}}
+              <p id="successMessage" class="error text-danger">{{logErr}}</p>
+              {{/if}}
+            </div>
+          </form>
+          {{/if}}
+
+                        
+                        
+                        
+                        
+                        
+                        <div class="switch-login">
+                            <a href="/loggin" class="or-login text-danger font-weight-bold">Login with E-mail & Password</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Register Form Section End -->
+
+    
+
+</body>
+
+</html>

@@ -1,0 +1,249 @@
+
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header Section Begin -->
+    
+    <!-- Header End -->
+
+   
+
+    <!-- Hero Section Begin -->
+    <section class="hero-section mb-4">
+        <div class="hero-items owl-carousel">
+            <div class="single-hero-items set-bg" data-setbg="img/hero-1.jpg">
+                <div class="container">
+                    <div class="row">
+                        {{#each banner}}
+                        <div class="col-lg-5">
+                            
+                            <h1 class="text-white">{{this.heading}}</h1>
+                            <p class="text-white">{{this.description}}</p>
+                        </div>
+                       
+                    </div>
+                    <div class="off-card">
+                        <h2 class="font-size-smaller"> {{this.couponName}} <span style="font-size: 12px;">{{this.couponDes}}</span></h2>
+                    </div>
+                </div>
+                 {{/each}}
+            </div>
+            <div class="single-hero-items set-bg" data-setbg="img/hero-2.jpg">
+                <div class="container">
+                    <div class="row">
+                        {{#each banner}}
+                        <div class="col-lg-5">
+                            
+                            <h1 class="text-white">{{this.heading}}</h1>
+                            <p class="text-white">{{this.description}}</p>
+                        </div>
+                       
+                    </div>
+                    <div class="off-card">
+                        <h2 class="font-size-smaller"> {{this.couponName}} <span style="font-size: 12px;">{{this.couponDes}}</span></h2>
+                    </div>
+                </div>
+                 {{/each}}
+            </div>
+            <div class="single-hero-items set-bg" data-setbg="img/hero-3.jpg">
+                <div class="container">
+                    <div class="row">
+                        {{#each banner}}
+                        <div class="col-lg-5">
+                            
+                            <h1 class="text-white">{{this.heading}}</h1>
+                            <p class="text-white">{{this.description}}</p>
+                        </div>
+                       
+                    </div>
+                    <div class="off-card">
+                        <h2 class="font-size-smaller"> {{this.couponName}} <span style="font-size: 12px;">{{this.couponDes}}</span></h2>
+                    </div>
+                </div>
+                 {{/each}}
+            </div>
+            <div class="single-hero-items set-bg" data-setbg="img/hero-4.jpg">
+                <div class="container">
+                    <div class="row">
+                        {{#each banner}}
+                        <div class="col-lg-5">
+                            
+                            <h1 class="text-white">{{this.heading}}</h1>
+                            <p class="text-white">{{this.description}}</p>
+                        </div>
+                       
+                    </div>
+                    <div class="off-card">
+                        <h2 class="font-size-smaller"> {{this.couponName}} <span style="font-size: 12px;">{{this.couponDes}}</span></h2>
+                    </div>
+                </div>
+                 {{/each}}
+            </div>
+        </div>
+    </section>
+    <!-- Hero Section End -->
+<hr>
+<div class="ml-5 text-center">
+    <div class="cat">  
+        <img src="img/category.png" alt="">
+    </div>
+</div>
+     <!-- Category Section Begin -->
+    <div class="banner-section spad">
+        <div class="container-fluid">
+             {{!-- <div style="background-color: rgb(247, 247, 154) ;"><h3 class=" font-weight-bold mb-3 text-center" style="color:#eb4b07 ;">CATEGORIES</h3></div> --}}
+            <div class="row">
+               
+                <div class="product-slider owl-carousel" >
+                {{#each category}}
+                {{!-- <div class="col-lg-3"> --}}
+                    
+                    <div class="single-banner" >
+                      <img src="/category-imgs/{{this._id}}.jpg" alt="" style=" height: 180px">
+                          <a href="/catWise?id={{this.catName}}"><div class="inner-text">
+                            <h5 class="font-weight-bold text-uppercase" style="font-family: 'Roboto', sans-serif; font-size: 30px; color:white;text-shadow: 2px 2px 5px #eb4b07;">{{this.catName}}</h5>
+                        </div></a>
+                    </div>
+                    
+                {{!-- </div> --}}
+                {{/each}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Category Section End -->
+
+    <hr>
+    <div class=" ml-5 mb-5 text-center">
+    <div class="cat">  
+        <img src="img/FAST-SELLING.png" alt="">
+    </div>
+</div>
+
+    <!-- Product Section Begin -->
+    <section class="women-banner spad">
+        <div class="container-fluid">
+            <div class="row">
+                {{!-- <div class="col-lg-3">
+                    <div class="product-large set-bg" data-setbg="img/products/women-large.jpg">
+                        <h2>Plants</h2>
+                        <a href="/shopProd">Discover More</a>
+                    </div>
+                </div> --}}
+                {{!-- <div class="col-lg-8 offset-lg-1">
+                    <div class="filter-control">
+                        <ul>
+                            <li class="active">Plants</li>
+                            <li>Flowers</li>
+                            <li>Seeds</li>
+                            <li>Fertilizers</li>
+                            <li>Seeds</li>
+                        </ul>
+                    </div> --}}
+                   
+                    <div class="product-slider owl-carousel">
+                     {{#each products}}
+                     <div class="col-lg-8 col-sm-6">
+                        <div class="product-item">
+                            <div class="pi-pic">
+                                <a href="/detailProd?id={{this._id}}"><img src="/product-imgs/{{this._id}}.jpg" alt="" style="width: 180px; height: 280px"></a>
+                                <div class="sale">Sale</div>
+                                <div class="icon">
+                                    <i class="icon_heart_alt"></i>
+                                </div>
+                                <ul>
+                                    <li class="w-icon active"><a onclick="addToCart('{{this._id}}')"><i class="icon_cart_alt"></i></a></li>
+                                    
+                                    <li class="w-icon"><a href="/add-to-wishlist/{{this._id}}"><i class="icon_heart_alt"></i></a></li>
+                                </ul>
+                            </div>
+                            <div class="pi-text">
+                                <div class="catagory-name">{{this.prodCat}}</div>
+                                <a href="#">
+                                    <h5>{{this.prodName}}</h5>
+                                </a>
+                                <div class="product-price">
+                                   ₹{{this.prodSellPrice}}
+                                    <span>₹{{this.prodMarketPrice}}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        </div>
+                        {{/each}}
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Product Section End -->
+
+    <!-- Deal Of The Week Section Begin-->
+    <section class="deal-of-week set-bg spad mb-5" data-setbg="img/time-bg.jpg">
+        <div class="container">
+            <div class="col-lg-6 text-center">
+                <div class="section-title">
+                    <h2>Deal Of The Day</h2>
+                    <p>Buy the Best Plant for this Special Offer Price </p>
+                    <div class="product-price">
+                        ₹ 103
+                        <span>/ Yellow Dalia</span>
+                    </div>
+                </div>
+                <div class="countdown-timer" id="countdown">
+                    <div class="cd-item">
+                        <span>12</span>
+                        <p>Hrs</p>
+                    </div>
+                    <div class="cd-item">
+                        <span>40</span>
+                        <p>Mins</p>
+                    </div>
+                    <div class="cd-item">
+                        <span>52</span>
+                        <p>Secs</p>
+                    </div>
+                </div>
+                <a href="#" class="primary-btn">Buy Now</a>
+            </div>
+        </div>
+
+    </section>
+    <!-- Deal Of The Week Section End -->
+
+    
+
+
+<script>
+function addToCart(pId){
+    $.ajax({
+        url:'/addtocart/'+pId,
+        method:'get',
+        success:(response)=>{
+            console.log(response,"kelloooo")
+            if(response.status){
+               let count=$('#cart-count').html()
+               count=parseInt(count)+1
+               $('#cart-count').html(count)
+            }
+  Swal.fire({
+  position: 'top-end',
+  icon: 'success',
+  title: 'Item added to the Cart',
+  showConfirmButton: false,
+  timer: 1000
+})
+        }
+    })
+}    
+</script>
+   
+
+</body>
+
+</html>

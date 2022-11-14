@@ -1,0 +1,146 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Fashi Template">
+    <meta name="keywords" content="Fashi, unica, creative, html">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Frello</title>
+
+    
+</head>
+
+<header class="header-section">
+        <div class="header-top">
+            <div class="container">
+                <div class="ht-left">
+                    <div class="mail-service">
+                        <i class=" fa fa-envelope"></i>
+                        frello.plants@gmail.com
+                    </div>
+                    <div class="phone-service">
+                        <i class=" fa fa-phone"></i>
+                        +91 9562050639
+                    </div>
+                </div>
+                
+                <div class="ht-right">
+                    {{#if user1}}
+                    <a href="/profile" class="login-panel text-succcess font-weight-bold text-uppercase" title="View Profile"><i class="fa fa-user text-success"></i>{{user1.username}} </a>
+                    <a href="/logout" class="login-panel text-danger mr-3 font-weight-bold">LOGOUT </a>
+                    {{else}}
+                   <a href="/loggin" class="login-panel"><i class="fa fa-user"></i>Login</a>
+                    {{/if}}
+                   
+
+                    
+                    <div class="top-social">
+                        <a href="#"><i class="ti-facebook"></i></a>
+                        <a href="#"><i class="ti-twitter-alt"></i></a>
+                        <a href="#"><i class="ti-linkedin"></i></a>
+                        <a href="#"><i class="ti-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="inner-header">
+                <div class="row">
+                    <div class="col-lg-2 col-md-2">
+                        <div class="logo">
+                            <a href="/">
+                                <img src="img/logo.png" alt="">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-lg-7 col-md-7">
+                        <div class="advanced-search">
+                            <button type="button" class="category-btn">All Categories</button>
+                            <div class="input-group">
+                                <input type="text" placeholder="Search for plants, flowers, seeds and more">
+                                <button type="button" ><i class="ti-search"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 text-right col-md-3">
+                        <ul class="nav-right">
+                            <li class="heart-icon">
+                                <a href="/view-wishlist" title="Wishlist">
+                                    <i class="icon_heart_alt"></i>
+                                    <span class="bg-primary">{{wishlistCount}}</span>
+                                </a>
+                            </li>
+                            <li class="cart-icon">
+                                <a href="/viewCart"><i class="icon_cart_alt"></i>
+                                    <span class="bg-success" id="cart-count">{{cartCount}}</span></a>
+                                 
+
+                                
+                                <div class="cart-hover">
+                                    <div class="select-items">
+                                        <table>
+                                            <tbody>
+                                                {{#each product}}
+                                                <tr>
+                                                    <td class="si-pic"><img src="/product-imgs/{{this.products._id}}.jpg" alt="" style="width: 70px; height:70px" ></td>
+                                                    <td class="si-text">
+                                                        <div class="product-selected">
+                                                            <p>₹{{this.products.prodSellPrice}}x{{this.quantity}}</p>
+                                                            <h6>₹{{this.products.prodName}}</h6>
+                                                        </div>
+                                                    </td>
+                                                    <td class="si-close">
+                                                        <i class="ti-close" onclick="removeProduct('{{this.products._id}}','{{this._id}}')"></i>
+                                                    </td>
+                                                </tr>
+                                                {{/each}}
+                                                
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                  
+                                    <div class="select-total">
+                                        <span>total amount:</span>
+                                        <h5>₹{{totalValue}}</h5>
+                                    </div>
+                                    <div class="select-button">
+                                        
+                                        <a href="/check-out" class="primary-btn checkout-btn">CHECK OUT</a>
+                                    </div>
+                                </div>
+                            </li>
+                            {{!-- <li class="cart-price">₹{{totalValue}}</li> --}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="nav-item">
+            <div class="container">
+                <div class="nav-depart">
+                    <div class="depart-btn">
+                        <i class="ti-menu"></i>
+                        <span>All Categories</span>
+                        <ul class="depart-hover">
+                            {{#each category}}
+                            {{!-- <li class="active"><a href="#">Women’s Clothing</a></li> --}}
+                            <li><a href="/catWise?id={{this.catName}}">{{this.catName}}</a></li>
+                            
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+                <nav class="nav-menu mobile-menu">
+                    <ul>
+                        
+                        <li><a href="/shopProd">GARDEN</a></li>
+                        <li><a href="/view-wishlist">WISH LIST</a></li>
+                        <li><a href="/viewCart">CART</a></li>
+                        <li><a href="/orders">ORDERS</a></li>
+                        <li><a href="/profile">PROFILE</a></li>
+                        
+                    </ul>
+                </nav>
+                <div id="mobile-menu-wrap"></div>
+            </div>
+        </div>
+    </header>
