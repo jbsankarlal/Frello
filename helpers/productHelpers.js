@@ -39,6 +39,20 @@ module.exports={
         
     // },
 
+    verifyLogin:(req,res,next)=>{
+ 
+      if(req.session.loggedIn){
+  
+          next()
+      }
+      else{
+          res.render('admin/log')
+      }
+  
+  
+  },
+  
+
 
     addNewProduct:(data)=>{
       let pName=data.prodName
@@ -67,23 +81,43 @@ module.exports={
          })
     },
 
+    fetchImages:(pId)=>{
+      return new Promise((resolve,reject)=>{
+       let data= db.get().collection('product').findOne({_id:ObjectId(pId)})
+       console.log(data,"dataaaa");
+       resolve(data.imageMany)
+      })
+    },
 
-addCategory:(category,callback)=>{
-console.log(category.catName,"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
-let cat=category.catName
-let dupCat= db.get().collection('category').findOne({catName:cat})
-if(dupCat){
+    fetchImg:(pId)=>{
+      return new Promise((resolve,reject)=>{
+       let data= db.get().collection('category').findOne({_id:ObjectId(pId)})
+       console.log(data,"dataaaa");
+       resolve(data.image)
+      })
+    },
+    
 
-callback({status:true})
+addCategory:(category)=>{
+  return new Promise(async(resolve,reject)=>{
+    console.log(category.catName,"EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+    let cat=category.catName
+    let dupCat=await db.get().collection('category').findOne({catName:cat})
+    console.log(dupCat,"kpdupvatt");
+    if(dupCat){
+    resolve(dupCat)
+    }
+    else{
+      db.get().collection('category').insertOne(category).then((data)=>{
+        resolve(data.insertedId)
+        console.log(data)
+            })
+    }
+    
+    
+  })
 }
-else{
-  db.get().collection('category').insertOne(category).then((data)=>{
-    callback(data.insertedId)
-    console.log(data)
-        })
-}
-
-},
+,
 
 getAllProducts:()=>{
   return new Promise(async(resolve,reject)=>{
@@ -97,7 +131,7 @@ getAllProductt:(page)=>{
     let skip=(parseInt(page)-1)*9
     console.log(skip,"Skipp",page);
     let prod= await db.get().collection('product').find().skip(skip).limit(9).toArray()
-    console.log(prod,"{[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]]]]]]]");
+    
     resolve(prod)
   })
 },
@@ -152,6 +186,8 @@ getAllOrders:(page)=>{
 },
 
 
+
+
 deleteProduct:(productId)=>{
   return new Promise((resolve,request)=>{
       db.get().collection('product').deleteOne({_id:ObjectId(productId)}).then((response)=>{
@@ -186,7 +222,8 @@ updateProduct:(pId,pDetails)=>{
         prodCat:pDetails.prodCat,
         prodQuantity:pDetails.prodQuantity,
         prodSellPrice:pDetails.prodSellPrice,
-        prodMarketPrice:pDetails.prodMarketPrice
+        prodMarketPrice:pDetails.prodMarketPrice,
+        imageMany:pDetails.imageMany
 
       }
     }).then((response)=>{
@@ -216,6 +253,7 @@ updateCategory:(catId,cDetails)=>{
       $set:{
         catName:cDetails.catName,
         catDescrp:cDetails.catDescrp,
+        image:cDetails.image
         
       
       }
@@ -250,106 +288,42 @@ unblockUser:(Id)=>{
 
  updateOrderStatus:(data)=>{
   let totalAmt
-  console.log(data,"kalooo guys");
-  let Placed
-  let Despatched
-  let Shipped
-  let Delivered
-  let Return
-
-  if(data.status=="Placed"){
-    Placed=true
-  }else{
-    Placed=false
-  }
-
-  if(data.status=="Shipped"){
-    Shipped=true
-  }else{
-    Shipped=false
-  }
-
-  if(data.status=="Despatched"){
-    Despatched=true
-  }else{
-    Despatched=false
-  }
-
-  if(data.status=="Out for Delivery"){
-    OutforDelivery=true
-  }else{
-    OutforDelivery=false
-  }
-
-  if(data.status=="Delivered"){
-    Delivered=true
-  }else{
-    Delivered=false
-  }
-
-  if(data.status=="Cancelled"){
-    Cancelled=true
-  }else{
-    Cancelled=false
-  }
-
-  if(data.status=="Return Requested"){
-    Return=true
-  }else{
-    Return=false
-  }
-  
-  if(data.status=="Return Completed"){
-    ReturnCompleted=true
-  }else{
-    ReturnCompleted=false
-  }
-
   totalAmt=parseInt(data.orderAmt)
-  console.log(totalAmt,"geloooo guys");
-  
-  console.log(data.status,"statusssssss");
-  if(data.status=='Return Completed' && data.payMethod!=='COD' || data.status=='Cancelled' && data.payMethod!=='COD' ){
-    statbar=true
+  console.log(data,"DATAAAAAAAAA");
+
     return new Promise((resolve,reject)=>{
-      db.get().collection('order').updateOne({_id:ObjectId(data.cartId)},
+
+      if(data.status=='Return Completed' && data.payMethod!=='COD' || data.status=='Cancelled' && data.payMethod!=='COD' ){
+      db.get().collection('order').updateOne({_id:ObjectId(data.orderId),'products.item':ObjectId(data.cartId)},
       {
-        $set:{status: data.status,statbar:statbar,Shipped:Shipped,Despatched:Despatched,OutforDelivery:OutforDelivery,Cancelled:Cancelled,Return:Return,ReturnCompleted:ReturnCompleted,Delivered:Delivered,Placed:Placed}
+        $set:{'products.$.status': data.status}
       })
       
       db.get().collection('users').updateOne({_id:ObjectId(data.user)},{
-        $inc:{wallet:parseFloat(totalAmt)}
+        $inc:{wallet:parseInt(totalAmt)}
      })
      resolve()
-    })
-    
-  }
-  else{
+    }
 
-  let statusbar
-  let statbar
- 
-  if(data.status=='Delivered' ){
-    statusbar=false
-  }else{
-    statusbar=true
-  }
-  if(data.status=='Return Requested' || data.status=='Cancelled' || data.status=='Return Completed'){
-   statbar=true
-  }
-  else{
-    statbar=false
-  }
-  return new Promise((resolve,reject)=>{
-    db.get().collection('order').updateOne({_id:ObjectId(data.cartId)},{
+ else if (data.status=="Despatched"||data.status=="Shipped" || data.status=="Out for Delivery" || data.status=='Delivered'||data.status=='Return Requested' || data.status=='Cancelled' || data.status=='Return Completed'){
+   if(data.status=="Delivered"){
+    db.get().collection('order').updateOne({_id:ObjectId(data.orderId),'products.item':ObjectId(data.cartId)},{
       $set:
-        {status: data.status,statusbar:statusbar,statbar:statbar,Shipped:Shipped,Despatched:Despatched,OutforDelivery:OutforDelivery,Cancelled:Cancelled,Return:Return,ReturnCompleted:ReturnCompleted,Delivered:Delivered,Placed:Placed}
-      
-    }).then(()=>{
-      resolve()
-    })
-  })
-  }
+        {'products.$.status':"Delivered",'products.$.statusbar':false}
+    
+ })
+resolve()
+}else{
+   
+    db.get().collection('order').updateOne({_id:ObjectId(data.orderId),'products.item':ObjectId(data.cartId)},{
+      $set:
+        {'products.$.status':data.status}
+    
+ })
+resolve()
+}}
+
+}) 
 
 },
 
@@ -392,13 +366,14 @@ getAllTheOrders:()=>{
   })
  },
 
- generateReportt:(data)=>{
-  console.log("lllllllll98888888888888888");
+ generateReportt:(from,to)=>{
+  console.log(from,to,"lllllllll98888888888888888");
   return new Promise(async(resolve,reject)=>{
     let ress = await db.get().collection('order').aggregate([
       {
-        $match:{status:"Delivered"}
+      $match:{date:{$gte: new Date(from),$lte: new Date(to)}}
       },
+      
       {
         $unwind:"$products"
       },
@@ -511,6 +486,57 @@ totalOdrCount:()=>{
 
 //   })
 // } 
+
+getMonthReport:()=>{
+  return new Promise(async(resolve,reject)=>{
+    let monthRprt=await db.get().collection('order').aggregate([
+      {$group:{_id:{'month':{$month:'$date'},'year':{$year:'$date'}},GrandTotal:{$sum:'$GrandTotal'}}},
+      {
+        $project:{_id:0,year:'$_id.year',month:'$_id.month',GrandTotal:'$GrandTotal'}
+      },
+      {
+        $sort:{year:-1,month:-1}
+      },
+      {
+        $limit:12
+      }
+    ]).toArray()
+    console.log(monthRprt,"monthRprt");
+    
+    monthRprt.forEach(element => {
+      function toMonthName(month){
+        const date =new Date();
+        date.setMonth(month - 1);
+        return date.toLocaleString('en-US',{
+          month:'long'
+        })
+      }
+      element.month = toMonthName(element.month)
+    });
+    console.log(monthRprt,"monthRprt");
+resolve(monthRprt)
+  })
+},
+
+getYearlyReport:()=>{
+  return new Promise(async(resolve,reject)=>{
+    let yearlyRprt=await db.get().collection('order').aggregate([
+      {$group:{_id:{'year':{$year:'$date'}},GrandTotal:{$sum:'$GrandTotal'}}},
+      {
+        $project:{_id:0,year:'$_id.year',GrandTotal:'$GrandTotal'}
+      },
+      {
+        $sort:{year:-1}
+      },
+      {
+        $limit:5
+      }
+    ]).toArray()
+    resolve(yearlyRprt)
+    console.log(yearlyRprt,"yearlyRprt");
+  }
+  )}
+
 
 
 }

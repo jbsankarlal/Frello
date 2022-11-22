@@ -1,0 +1,170 @@
+<!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+             <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+        <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+            <h2 class="text-primary mb-0">
+                <i class="fa fa-user-edit"></i>
+            </h2>
+        </a>
+        <a href="#" class="sidebar-toggler flex-shrink-0">
+            <i class="fa fa-bars"></i>
+        </a>
+        <form class="d-none d-md-flex ms-4">
+            <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+        </form>
+        <div class="navbar-nav align-items-center ms-auto">
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fa fa-envelope me-lg-2"></i>
+                    <span class="d-none d-lg-inline-flex">Message</span>
+                </a>
+                
+            </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fa fa-bell me-lg-2"></i>
+                    <span class="d-none d-lg-inline-flex">Notification</span>
+                </a>
+                
+            </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <img class="rounded-circle me-lg-2" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                    <span class="d-none d-lg-inline-flex">ADMIN</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                    <a href="#" class="dropdown-item">My Profile</a>
+                    <a href="#" class="dropdown-item">Settings</a>
+                    <a href="/admin/adminLogout" class="dropdown-item">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+            <!-- Navbar End -->
+
+
+            <!-- Table Start -->
+            
+                    
+                    <div class="col-12">
+                        <div class="bg-black rounded h-100 p-4">
+                            <h6 class="mb-4">ORDER LIST</h6>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>SNo.</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Date</th>
+                                            <th scope="col">Mobile</th>
+                                            <th scope="col">item</th>
+                                            <th scope="col">Payment Method</th>
+                                            <th scope="col">Total amount(₹)</th>
+                                            <th scope="col">Status</th>
+                                            
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {{#each order}}
+                                        <tr>
+                                            <th class="create_index"></th>
+                                            <td class="text-warning">{{this.name}}</td>
+                                            <td>{{this.date}}</td>
+                                            <td style="color: yellow;">{{this.mobile}}</td>
+                                            <td>{{this.item}}</td>
+                                            <td>{{this.paymentMathod}}</td>
+                                            <td>{{this.frelloPrice}}</td>
+                                            <td>
+                                                <select onchange="changeStatus('{{this._id}}','{{this.item}}','{{this.frelloPrice}}','{{this.userId}}','{{this.paymentMathod}}')" name="orderstatus" id="{{this.item}}">
+                                                    <option selected value="{{this.status}}" class="text-success">{{this.status}}</option>
+
+                                                    {{#isEqual this.status 'Placed'}}
+                                                    
+                                                    <option value="Despatched">Despatched</option>
+                                                    <option value="Shipped">Shipped</option>
+                                                    <option value="Shipped">Out for Delivery</option>
+                                                    <option value="Delivered">Delivered</option>
+                                                    {{/isEqual}}
+
+                                                    {{#isEqual this.status 'Despatched'}}
+                            
+                                                    <option value="Shipped">Shipped</option>
+                                                    <option value="Shipped">Out for Delivery</option>
+                                                    <option value="Delivered">Delivered</option>
+                                                    {{/isEqual}}
+
+                                                    {{#isEqual this.status 'Shipped'}}
+                                                   
+                                                    <option value="Shipped">Out for Delivery</option>
+                                                    <option value="Delivered">Delivered</option>
+                                                    {{/isEqual}}
+
+                                                    {{#isEqual this.status 'Out for Delivery'}}
+                                                   
+                                                    <option value="Delivered">Delivered</option>
+                                                    {{/isEqual}}
+
+                                                     {{#isEqual this.status 'Return Requested'}}
+                                                   
+                                                    <option value="Return Completed">Return Completed</option>
+                                                    {{/isEqual}}
+
+                                                    
+
+                                                </select>
+                                            </td>
+                                            
+                                             
+                                        </tr>                                                   
+                                        {{/each}}
+
+
+                                    
+                                    </tbody>
+                                </table>
+
+{{!-- <==============pagenation==============> --}}
+<nav aria-label="Page navigation example bg-white">
+  <ul class="pagination  justify-content-center">
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+        <span class="sr-only">Previous</span>
+      </a>
+    </li>
+    {{#each count}}
+    <li class="page-item"><a class="page-link" href="/admin/orderMan?id={{this}}">{{this}}</a></li>
+    {{/each}}
+
+    <li class="page-item">
+      <a class="page-link" href="#" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+        <span class="sr-only">Next</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+{{!-- <==============pagenation==========> --}}
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Table End -->
+
+
+            
+        </div>
+        <!-- Content End -->
+
+
+
+
+ <script src="/js/javascript.js"></script>   
+  <script>
+   var divs = document.querySelectorAll('.create_index'); for (var i = 0; i <
+    divs.length; ++i) { divs[i].innerHTML = i + 1; }
+  </script>

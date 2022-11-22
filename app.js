@@ -5,10 +5,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var hbs = require('express-handlebars')
 var db=require('./config/connection')
-var fileUpload=require('express-fileupload')
+
 var session=require('express-session')
-var multer = require('multer');
-const upload = multer({ dest: './public/product-imgs' })
+
+
 
 
 
@@ -28,8 +28,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout',partialsDir:__dirname+'/views/partials'}))
-app.use(fileUpload())
+app.engine('hbs',hbs.engine({extname:'hbs',defaultLayout:'layout',layoutsDir:__dirname+'/views/layout',partialsDir:__dirname+'/views/partials',
+helpers:{
+  isEqual:(status,value,options)=>{
+if(status == value){
+  return options.fn(this)
+}
+return options.inverse(this)
+  }}
+}))
+
 app.use(session({secret:"AvengersAssemble",cookie:{maxAge:10000000}}))
 db.connect((err)=>{
   if(err) console.log("Database error", err);
@@ -53,7 +61,7 @@ app.use(function(err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.render('user/error',{user:true});
 });
 
 module.exports = app;

@@ -1,9 +1,9 @@
 /********** Template CSS **********/
 :root {
-    --primary: #EB1616;
-    --secondary: #191C24;
+    --primary: #ffb60c;
+    --secondary: #0e2053;
     --light: #eff0f5;
-    --dark: #191C24;
+    --dark: #303e72;
 }
 
 .back-to-top {
@@ -74,7 +74,7 @@
     width: 250px;
     height: 100vh;
     overflow-y: auto;
-    background: var(--secondary);
+    background: var(--#0e2053);
     transition: 0.5s;
     z-index: 999;
 }
@@ -126,7 +126,7 @@
     padding: 7px 20px;
     color: var(--light);
     font-weight: 500;
-    border-left: 3px solid var(--secondary);
+    border-left: 3px solid var(--#0e2053);
     border-radius: 0 30px 30px 0;
     outline: none;
 }
@@ -176,7 +176,7 @@
 
 .sidebar .navbar .dropdown-item:hover,
 .sidebar .navbar .dropdown-item.active {
-    background: var(--dark);
+    background: var(--#0e2053);
 }
 
 .content .navbar .navbar-nav .nav-link {

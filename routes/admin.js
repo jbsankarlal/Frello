@@ -1,12 +1,45 @@
 var express = require('express');
 const { response } = require('../app');
 var router = express.Router();
-var productHelper=require('../helpers/productHelpers')
+var productHelper=require('../helpers/productHelpers');
+const { verifyLogin } = require('../helpers/productHelpers');
 var userHelper=require('../helpers/userHelpers')
+const multer = require('multer');
 
 /* GET users listing. */
 
-router.get('/dash', async function (req, res, next) {
+const multerStorageCategory= multer.diskStorage({
+  destination: function(req,file,cb){
+    cb(null, "./public/category-imgs")
+  },
+  filename: function(req,file,cb){
+    cb(null, Date.now() + '-' + file.originalname)
+  }
+})
+
+const uploadOne = multer({storage: multerStorageCategory});
+const uploadSingleFile =uploadOne.fields([{name:'image', maxCount:1}])
+uploadOne
+
+
+
+// <================multer===============>
+const multerStorageProduct = multer.diskStorage({
+  destination: function(req,file,cb){
+    cb(null, "./public/product-imgs");
+  },
+  filename: function(req,file,cb){
+    cb(null, Date.now() + '-' + file.originalname)
+  }
+})
+
+const uploadMany = multer({storage: multerStorageProduct});
+/*const uploadMultiFile= uploadMany.fields([{name:'imagemany', maxCount:5}])
+uploadMany8*/
+// <================multer===============>
+
+
+router.get('/dash', verifyLogin,async function (req, res, next) {
   let cod= await userHelper.CODtotal()
   console.log(cod,"cod----");
   let COD
@@ -37,16 +70,25 @@ router.get('/dash', async function (req, res, next) {
   
   
   let orders= await productHelper.getAllTheOrders()
+  console.log(orders,"{{{{{{{}}}}}}}");
+  
   let totalGross= COD+Razor+Paypal
   let order=orders.order
-  let total=orders.totalcount
-    res.render('pages/admin-Dashboard',{layout:'adminLayout',order,total,COD,razor,paypal,totalGross})
+  order.forEach(order => {
+    order.date = order.date.toString().substr(4, 17)
+    
+      });
+  let total=orders.totalcount  
+  let monthChart= await productHelper.getMonthReport()
+  let yearChart= await productHelper.getYearlyReport()
+  console.log(yearChart,"yearChart");
+    res.render('admin/Dashboard',{layout:'adminLayout',order,total,COD,razor,paypal,totalGross,monthChart,orders,yearChart})
   })
   
   
 
 
-router.get('/userMan', async function(req, res, next) {
+router.get('/userMan',verifyLogin,async function(req, res, next) {
 
   let totalUsers=await productHelper.totalUserCount()
   let pageCount=Math.ceil(totalUsers/8)
@@ -59,13 +101,13 @@ router.get('/userMan', async function(req, res, next) {
 console.log(req.query.id,"reqqueryid");
 productHelper.getAllUsers().then((use)=>{
 
-  res.render('pages/admin-user',{layout:'adminLayout',users,totalUsers,use,count})
+  res.render('admin/users',{layout:'adminLayout',users,totalUsers,use,count})
  })
  
   
 });
 
-router.get('/productMan', async function(req, res, next) {
+router.get('/productMan',verifyLogin, async function(req, res, next) {
   let totalproducts=await productHelper.totalProdCount()
   let pageCount=Math.ceil(totalproducts/8)
   let count=[]
@@ -77,7 +119,7 @@ router.get('/productMan', async function(req, res, next) {
 console.log(req.query.id,"reqqueryid");
 
   productHelper.getAllProducts().then((prod)=>{
-    res.render('pages/admin-product',{layout:'adminLayout',products,count})
+    res.render('admin/product',{layout:'adminLayout',products,count})
   })
   
 });
@@ -92,80 +134,58 @@ router.get('/deleteUser/:pId', function(req, res, next) {
 
 
 
-router.get('/addProd', function(req, res, next) {
+router.get('/addProd',verifyLogin, function(req, res, next) {
   let add= req.session.alert
   req.session.alert=null
   productHelper.getAllCategory().then((category)=>{
-  res.render('pages/admin-add-product',{layout:'adminLayout',category,add})
+  res.render('admin/add-product',{layout:'adminLayout',category,add})
 })
 });
 
-router.get('/catMan', function(req, res, next) {
-  productHelper.getAllCategory().then((products)=>{
-  res.render('pages/admin-category',{layout:'adminLayout',products})
+router.get('/catMan',verifyLogin, function(req, res, next) {
+  productHelper.getAllCategory().then((category)=>{
+  res.render('admin/category',{layout:'adminLayout',category})
 })
 });
 
 
-router.get('/addCat', function(req, res, next) {
+router.get('/addCat',verifyLogin, function(req, res, next) {
   let add1=req.session.alert
   req.session.alert=null
-  res.render('pages/admin-add-category',{layout:'adminLayout',add1,'alert':req.session.catalert})
+  res.render('admin/add-category',{layout:'adminLayout',add1,'alert':req.session.catalert})
   req.session.catalert=null
 });
 
 
 
-router.post('/addProd',(req,res)=>{
-  productHelper.addNewProduct(req.body).then((id)=>{
-    if(id.value=="exist"){
-     res.redirect('/admin/addProd')
-    }
-    else if(id.value=="amount"){
-      res.redirect('/admin/addProd')
-    }
-    else{
-    let image=req.files.prodImage
-    image.mv('./public/product-imgs/'+id+'.jpg',(err,done)=>{
-  if(!err){
+router.post('/addProd',uploadMany.array('imageMany'),(req,res)=>{
+ 
+    
+      let imageMany=[]
+      req.files.forEach((value,index)=>{
+        console.log(value,"vali=ue");
+        imageMany.push(value.filename)
+      })
+      console.log(imageMany,"imageMany");
+      req.body.imageMany=imageMany
+      productHelper.addNewProduct(req.body).then((id)=>{
     res.redirect('/admin/addProd')
-  }
-  else{
-    console.log(err);
-    res.redirect('/admin/addProd')
-  }
-  })
-}
+  
+  
+
   })
   
 })
 
-router.post('/addCat', function(req, res, next) {
-console.log(req.body)
-productHelper.addCategory(req.body,(id)=>{
-  if(id.status){
-    console.log("category exist");
-    req.session.catalert="CATEGORY ALREADY EXISTS"
-    res.redirect('/admin/addCat')
-    
-  }
-  else{
-    
-  let image=req.files.catImg
-  image.mv('./public/category-imgs/'+id+'.jpg',(err,done)=>{
-if(!err){
-  req.session.alert=true
-  res.redirect('/admin/addCat')
+router.post('/addCat',uploadSingleFile, (req, res, next)=> {
+console.log(req.body,"oooooooooooooooooooooooooooooooooooooo")
+req.body.image= req.files.image[0].filename 
 
-}
-else{
-  res.redirect('/admin/CatMan')
-  console.log(err);
-}
+   productHelper.addCategory(req.body)
+res.redirect('/admin/addCat')
   })
-  }
-  })
-});
+  
+
 // <-----------------products---------------->
 
 
@@ -177,38 +197,38 @@ res.redirect("/admin/productMan")
 });
 
 
-router.get('/editProdt/', async (req,res,next)=>{
+router.get('/editProdt/',verifyLogin, async (req,res,next)=>{
   let add= req.session.alert
   req.session.alert=null
 let product=await productHelper.getProductDetails(req.query.id)
 productHelper.getAllCategory().then((category)=>{
-  res.render('pages/admin-edit-product',{category,product,layout:'adminLayout',add}) 
+  res.render('admin/edit-product',{category,product,layout:'adminLayout',add}) 
 })
 })
 
-router.post('/editProd/:id',(req,res)=>{
-  
-  let image=req.files.prodImage
-  productHelper.updateProduct(req.params.id,req.body).then(()=>{
-    let id=req.params.id
-     req.session.alert=true
-    
-   
-     image.mv('./public/product-imgs/'+id+'.jpg',(err,done)=>{
-      if(!err){
-        req.session.alert=true
-        res.redirect('/admin/productMan')
-      
-      }
-      else{
-        console.log(err);
-      }
-      
-        
-        
+router.post('/editProd/:id',uploadMany.array('imageMany'),async(req,res)=>{
+  let imageMany=[]
+  if(req.files.length==0){
+  imageMany= await productHelper.fetchImages(req.params.id)
+  }
+  else{
+    req.files.forEach((value,index)=>{
+      imageMany.push(value.filename)
     })
-  })
-})
+  }
+  req.body.imageMany =imageMany
+  productHelper.updateProduct(req.params.id,req.body).then(()=>{
+    
+    
+        res.redirect('/admin/productMan')
+  }
+      
+   )})
+
+   
+     
+  
+
 
 
 
@@ -222,24 +242,25 @@ router.get('/deleteCat/:cId', function(req, res, next) {
   });
   
   
-  router.get('/editCatt/', async (req,res,next)=>{
+  router.get('/editCatt/',uploadSingleFile, async (req,res,next)=>{
   console.log(req.query.id);
   let product=await productHelper.getCatDetails(req.query.id)
     console.log(product); 
-    res.render('pages/admin-edit-category',{product,layout:'adminLayout'}) 
+    res.render('admin/edit-category',{product,layout:'adminLayout'}) 
   })
   
-  router.post('/editCat/:id',(req,res)=>{
-    console.log(req.files.catImg,"000000000000000000000000000000000000000000000000000000000");
-    let image=req.files.catImg
+  router.post('/editCat/:id',uploadSingleFile,async(req,res)=>{
+    if(req.files.image == null){
+      image1 = await productHelper.fetchImg(req.params.id)
+    }else{
+      image1= await req.files.image[0].filename
+    }
+    req.body.image=image1
+  
     productHelper.updateCategory(req.params.id,req.body).then(()=>{
-      let id=req.params.id
-      res.redirect('/admin/catMan')
-     image.mv('./public/category-imgs/'+id+'.jpg',(err,done)=>{
       
-
-
-    })
+      res.redirect('/admin/catMan')
+     
      
     })
   })
@@ -262,11 +283,11 @@ router.get('/blockUser/:id',(req,res)=>{
 
     // <-------------------admin login-------------->
 
-const CentralAdmin="sankar"
+const CentralAdmin="sankar@admin.com"
 const CentralPassword="sachin"
 
 /* GET home page. */
-router.get('/adminlogin', function(req, res,next) {
+router.get('/admin', function(req, res,next) {
 
   res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
   let User=req.session.admin;
@@ -274,22 +295,22 @@ router.get('/adminlogin', function(req, res,next) {
     res.redirect('/admin/dash')
   }
   else
- res.render('admin-Login',{layout:'adminLayout'});
+ res.render('admin/log');
  req.session.loginerr=null
 });
 
 
-router.post('/adminlogin',(req,res)=>{
+router.post('/admin',(req,res)=>{
 
-  const userdata={mobileNo,password}=req.body;
-  if(CentralAdmin==mobileNo && CentralPassword==password){
+  const userdata={email,password}=req.body;
+  if(CentralAdmin==email && CentralPassword==password){
     req.session.loggedIn=true;
     req.session.admin=userdata;
     res.redirect('/admin/dash')
   }
   else{
     req.session.loginerr="invalid credintials"
-    res.redirect('/adminlogin')
+    res.redirect('/admin/admin')
   }
   
 })
@@ -302,12 +323,12 @@ router.get('/adminLogout',function(req, res) {
   res.clearCookie('CentralPassword');
   req.session.admin=null;
   req.session.loggedIn=false
-  res.redirect('/admin')
+  res.redirect('/admin/admin')
   });
 
 
 // <-------------------orders------------------>
-router.get('/orderMan', async (req,res,next)=>{
+router.get('/orderMan',verifyLogin, async (req,res,next)=>{
  if(!req.query.id){
   req.query.id=1
  }
@@ -330,7 +351,7 @@ order.date = order.date.toString().substr(0, 10)
 
   });
 
-res.render('pages/admin-order',{layout:'adminLayout',order,count})
+res.render('admin/order',{layout:'adminLayout',order,count})
 })
   })
 
@@ -338,7 +359,7 @@ res.render('pages/admin-order',{layout:'adminLayout',order,count})
 
 router.get('/edit-orders/', async (req,res,next)=>{
   let order=await productHelper.getAllOrders(req.query.id)
-    res.render('pages/adminEditOrder',{layout:'adminLayout',order}) 
+    res.render('admin/adminEditOrder',{layout:'adminLayout',order}) 
   })
   
   
@@ -362,20 +383,20 @@ router.get('/edit-orders/', async (req,res,next)=>{
   })
   })
 
-router.get('/reports',(req,res,next)=>{
-  res.render('pages/admin-Reports',{layout:'adminLayout'})
+router.get('/reports',verifyLogin,(req,res,next)=>{
+  res.render('admin/Reports',{layout:'adminLayout'})
 })
 
 // <------------coupon------------>
 
-router.get('/coupons',(req,res,next)=>{
+router.get('/coupons',verifyLogin,(req,res,next)=>{
   productHelper.getAllCoupons().then((coupons)=>{
-    res.render('pages/admin-coupons',{layout:'adminLayout',coupons})
+    res.render('admin/coupons',{layout:'adminLayout',coupons})
   })
 })
 
-router.get('/addcoupon',(req,res,next)=>{
-res.render('pages/admin-add-coupon',{layout:'adminLayout'})
+router.get('/addcoupon',verifyLogin,(req,res,next)=>{
+res.render('admin/add-coupon',{layout:'adminLayout'})
 })
 
 
@@ -393,23 +414,26 @@ router.get('/delete-coupon/:cId', function(req, res, next) {
   });
 
   // <============SALES REPORT=============>
-
   router.get('/salesreport',async(req,res)=>{
-  
-   let report= await productHelper.generateReportt()
-   
-      res.render('pages/admin-Reports',{layout:'adminLayout',report})
+    
+    res.render('admin/Reports',{layout:'adminLayout'})
+      })
+
+  router.post('/salesreport',async(req,res)=>{
+  console.log(req.body,"bodyyyy");
+  let report= await productHelper.generateReportt(req.body.from,req.body.to)
+  res.render('admin/Reports',{layout:'adminLayout',report})
     })
    
   // <=============BANNERS==============>
-  router.get('/banner',async(req,res)=>{
+  router.get('/banner',verifyLogin,async(req,res)=>{
     productHelper.setBanner().then((banner)=>{
-      res.render('pages/admin-banner',{layout:'adminLayout',banner})
+      res.render('admin/banner',{layout:'adminLayout',banner})
     })
   })
 
   router.get('/add-new-banner',(req,res,next)=>{
-    res.render('pages/admin-add-banner',{layout:'adminLayout'})
+    res.render('admin/add-banner',{layout:'adminLayout'})
     })
 
   router.post('/add-new-banner',(req,res,next)=>{

@@ -1,0 +1,162 @@
+
+
+<section class=" gradient-custom">
+
+  <div class="container py-5 " >
+   <div class="card-body p-4">
+
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="d-flex flex-column">
+                <span class="lead fw-normal">Your order has been {{status}}</span>
+                <span class="text-muted small">by Frello on {{date}}</span>
+              </div>
+              
+            </div>
+            <hr class="my-4">
+           
+          </div>
+
+{{!-- <==============section==============> --}}
+    <button class="btn btn-success text-white" onclick="generatePDF()">Download Invoice</button>
+    <div class="mt-5" id="invoice">
+    <div class="row d-flex justify-content-center align-items-center" >
+      <div class="col-md-10 col-xl-8" >
+        <div class="card" style="border-radius: 10px;">
+          
+          <div class="card-body p-4">
+             <p class="lead fw-normal mb-0 font-weight-bold" style="color: #180214;">FRELLO</p>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <p class="lead fw-normal mb-0 font-weight-bold" style="color: #180214;">Purchase Receipt</p>
+              <p class="small text-muted mb-0">Receipt Voucher : 1KAU9-84UIL</p>
+            </div>
+            <p class="text-dark mb-0">Purchase Date : {{date}}</p>
+            <p class="text-dark mb-0" style="font-size: 15px;">Name : {{name}}</p>
+            <p class="text-dark mb-0" style="font-size: 15px;">Address : {{address}}</p>
+            <p class="text-dark mb-0" style="font-size: 15px;">Pincode : {{state}}</p>
+            <p class="text-dark mb-0" style="font-size: 15px;">E-mail : {{email}}</p>
+            <div class="d-flex justify-content-between mb-0">
+             <p class="text-dark mb-0" style="font-size: 15px;">Mobile No. : {{mobile}}</p>
+             <p class="text-success mb-0" style="font-size: 15px;">Mode of Payment : {{paymentMethod}}</p>
+            </div>
+            
+            
+             <p class="lead fw-normal mb-0 text-center" style="color: #6a1253;">Purchased ITEMS</p>
+            {{#each product}}
+            <div class="card shadow-0 border mb-4">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-2">
+                    <img src="/product-imgs/{{this.products._id}}.jpg" alt="" style="height: 100px ;width:100px"
+                      class="img-fluid" alt="Phone">
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0">{{products.prodName}}</p>
+                  </div>
+                  
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0 small">{{this.quantity}}</p>
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0 small mr-2">₹{{this.products.prodSellPrice}}</p><br>
+                    <p class="text-muted mb-0 small"><del>₹{{this.products.prodMarketPrice}} </del></p>
+                  </div>
+                  <div class="col-md-2 text-center d-flex justify-content-center align-items-center">
+                    <p class="text-muted mb-0 small">Sub total :₹{{this.total}} {{this.grandtotal}}</p>
+                  </div>
+                  
+                </div>
+                
+                <hr class="mb-4" style="background-color: #e0e0e0; opacity: 1;">
+               
+                <h6>Order Status: <span class="text-success">{{this.status}}</span></h6>
+               
+                <hr>
+
+                 
+                {{!-- <===================end================> --}}
+              </div>
+            </div>
+             {{/each}}
+           
+            
+
+           
+
+            
+            <div class="d-flex justify-content-between mb-0">
+              <p class="text-muted mb-0">Recepits Voucher : 18KU-62IIK</p>
+              <p class="text-muted mb-0"><span class="fw-bold me-4">Delivery Charges</span> Free</p>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between mb-0">
+              <p class="text-muted mb-0"></p> 
+              <p class="text-muted mb-0"><span class="fw-bold me-4">MRP :</span> <del>₹{{mrp}}</del></p>
+            </div>
+             <div class="d-flex justify-content-between mb-0">
+              <p class="text-muted mb-0"></p> 
+              <p class="text-muted mb-0"><span class="fw-bold me-4">Frello Price :</span> ₹{{offerPrice}}</p>
+            </div>
+            <div class="d-flex justify-content-between mb-0">
+              <p class="text-muted mb-0"></p> 
+              <p class="text-muted mb-0"><span class="fw-bold me-4">Coupon Discount :</span>- ₹{{discount}}</p>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between mb-0">
+              <p class="text-muted mb-0"></p> 
+              <p class="text-muted mb-0"><span class="fw-bold me-4 font-weight-bold text-success">Grand Total :</span> ₹{{grandTotal}}</p>
+            </div>
+              
+          </div>
+          
+          {{!-- <div class="card-footer border-0 px-4 py-5"
+            style="background-color: #a8729a; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px;">
+            <h5 class="d-flex align-items-center justify-content-end text-white text-uppercase mb-0">Total
+              paid: <span class="h2 mb-0 ms-2">₹{{amt}}</span></h5>
+          </div> --}}
+        </div>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+  {{!-- <div class="container py-5 ">
+    <div class="row d-flex justify-content-center align-items-center ">
+      <div class="col">
+        <div class="card card-stepper" style="border-radius: 10px;">
+          
+        </div>
+      </div>
+    </div>
+  </div> --}}
+
+
+
+<script>
+    function generatePDF() {
+        const element = document.getElementById('invoice');
+        html2pdf()
+            .from(element)
+            .save();
+
+    }
+</script>
+<script>
+  function changeStat(oId,pId){
+
+    $.ajax({
+
+      url:'/cancel-order',
+      data:{
+        oId:oId,
+        pId:pId
+      },
+      method:'post',
+      success:(response)=>{
+
+      }
+
+    })
+
+  }
+</script>

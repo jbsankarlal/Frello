@@ -56,8 +56,10 @@
                         <div class="advanced-search">
                             <button type="button" class="category-btn">All Categories</button>
                             <div class="input-group">
-                                <input type="text" placeholder="Search for plants, flowers, seeds and more">
-                                <button type="button" ><i class="ti-search"></i></button>
+                                <form action="/search" method="post">
+                                <input type="text"  name="search" placeholder="Search for plants & more">
+                                <button type="submit" ><i class="ti-search"></i></button>
+                                </form>
                             </div>
                         </div>
                     </div>
@@ -144,3 +146,5 @@
             </div>
         </div>
     </header>
+
+    <script src="/js/javascript.js"></script>

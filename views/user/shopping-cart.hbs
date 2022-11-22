@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zxx">
+
+
+
+<body>
+    <!-- Page Preloder -->
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Header Section Begin -->
+    
+    <!-- Breadcrumb Section Begin -->
+    <div class="breacrumb-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="breadcrumb-text product-more">
+                        <a href="./home.html"><i class="fa fa-home"></i> Home</a>
+                        <a href="./shop.html">Shop</a>
+                        <span>Shopping Cart</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Breadcrumb Section Begin -->
+
+    <!-- Shopping Cart Section Begin -->
+    <section class="shopping-cart spad ">
+        <h2 class="text-center font-weight-bolder mb-4 text-secondary text-uppercase" >Your Cart</h2>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="cart-table border border-warning">
+                        <table>
+                            {{!-- <thead>
+
+                                <tr>
+                                    <th class="bg-warning text-center">Product</th>
+                                    <th class="p-name bg-warning text-center">Name</th>
+                                    <th class="p-name bg-warning text-center">MRP</th>
+                                    <th class="p-name bg-warning text-center">Quantity</th>
+                                    <th class="p-name bg-warning text-center">Total</th>
+                                    <th class="p-name bg-warning text-center pr-3">Remove</th>
+                                </tr>
+                            </thead> --}}
+                            <tbody>
+                               
+                                {{#each product}}
+                                  
+                                <tr>
+                                    
+                                    <td class="cart-pic first-row"><img src="/product-imgs/{{this.products._id}}.jpg" alt="" style="height: 100px ;width:100px"></td>
+                                    <td class="cart-title first-row text-center">
+                                        <h5>{{this.products.prodName}}</h5>
+                                    </td>
+                                    <td class="p-price first-row text-dark">MRP : ₹<del>{{this.products.prodMarketPrice}}</del><br>
+                                    <span class="text-success">Frello Price :{{this.products.prodSellPrice}}</span></td>
+                                    
+                                    
+                                    <td >
+                                        <button class="cart-item-count mt-3 mr-3 bg-warning" style="border: none;" onclick="changeQuantity('{{this._id}}','{{this.products._id}}','{{this.products.prodSellPrice}}','{{this.products.prodMarketPrice}}',-1)">-</button>
+                                          <span id="{{this.products._id}}">{{this.quantity}}</span>
+                                        <button class="cart-item-count mr-3 ml-3 bg-warning" style="border: none;" onclick="changeQuantity('{{this._id}}','{{this.products._id}}','{{this.products.prodSellPrice}}','{{this.products.prodMarketPrice}}',1)">+</button>
+                        
+                                    </td>
+                                   
+                                    
+                                    
+                                    
+                                     <td class="total-price first-row text-success" >Sub Total : ₹<span id="sub{{this.products._id}}">{{this.total}}</span></td>
+                                    <td class="close-td first-row"><i class="ti-close" onclick="removeProduct('{{this.products._id}}','{{this._id}}')"></i></td>
+                                    
+                            
+                            
+                            
+
+                                {{/each}}
+                                
+                                     </tr>
+                                     
+                            </tbody>
+
+                            
+                        </table>
+                        
+                    </div>
+                    {{#if product}}
+                    <div class="row">
+                        <div class="col-lg-4">
+
+                            <div class="discount-coupon">
+                                <h4 class=" font-weight-bold mb-3" style="color: #eb4b07;">OFFERS & COUPONS</h4>
+                                {{#each coupon}}
+                                <p><span class="text-primary font-weight-bold">{{this.couponCode}}</span>-{{this.discount}}% discount upto ₹{{this.max}}</p>
+                                {{/each}}
+
+                                <form id="coupon-check" action="" class="coupon-form border border-danger" style="border-color: #eb4b07;">
+                                    <input type="text" name="couponName" placeholder="Enter your coupon code here">
+                                    <button type="submit" class="site-btn coupon-btn" style="color: #eb4b07;">Apply</button>
+                                </form>
+                            </div>
+                        </div>
+                      
+                        <div class="col-lg-4 offset-lg-4 ">
+                            <div class="proceed-checkout border border-dark">
+                                <ul id="totalList">
+                                    <li class="subtotal">Total <span ><del id="mrp1">{{totalMRP}}</del></span></li>
+                                    <li class="subtotal">Frello Price <span id="subtotal1" class="text-success">{{totalValue}}</span></li>
+                                    <li class="subtotal">Subtotal <span class="text-primary" id="subtotal2">{{totalValue}}</span></li>
+                                    <li class="cart-total ">Total : <span class="text-primary" id="final-total">{{totalValue}}</span></li>
+                                </ul>
+                                <a href="/check-out" class="proceed-btn btn btn-success">PROCEED TO CHECK OUT</a>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    {{else}}
+                    <h3 class="text-primary">Oops!! Your Cart is Empty!!</h3>
+                    {{/if}}
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Shopping Cart Section End -->
+
+                     
+                                
+                                
+
+
+
+    
+
+  <script>
+    function changeQuantity(cartId,pId,price,mrp,count){
+        console.log("cartId,pId,price,mrp,count",cartId,pId,price,mrp,count)
+        let mrp1=parseInt(document.getElementById('mrp1').innerHTML)
+        let subtotal=parseInt(document.getElementById('final-total').innerHTML)
+        let subtotal1=parseInt(document.getElementById('subtotal1').innerHTML)
+        let subtotal2=parseInt(document.getElementById('subtotal2').innerHTML)
+        let quantity=parseInt(document.getElementById(pId).innerHTML)
+        count=parseInt(count)
+         if(quantity + count == 0){
+         Swal.fire({
+  title: 'Do you want to Remove this product from the Cart?',
+  text: "",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, Remove it!'
+}).then((result) => {
+  if (result.isConfirmed) {
+         
+        
+        $.ajax({
+            url:'/change-product-quantity',
+            data:{
+                cart: cartId,
+                product:pId,
+                count:count,
+                quantity:quantity
+            },
+            method:'post',
+            success:(response)=>{
+
+                if(response.removeProduct){
+                    location.reload()
+                    
+                }else{
+                    console.log(subtotal,price,"jelloooo")
+                    document.getElementById(pId).innerHTML=quantity+count
+                    document.getElementById(mrp1)
+                    document.getElementById('sub'+pId).innerHTML=(quantity+count)*price
+                    document.getElementById('final-total').innerHTML=subtotal+(count*parseInt(price))
+                    document.getElementById('subtotal1').innerHTML=subtotal1+(count*parseInt(price))
+                    document.getElementById('subtotal2').innerHTML=subtotal2+(count*parseInt(price))
+                     document.getElementById('mrp1').innerHTML=mrp1+(count*parseInt(mrp))
+
+                    
+                }
+            }
+        })
+    }
+})
+
+}else{
+     $.ajax({
+            url:'/change-product-quantity',
+            data:{
+                cart: cartId,
+                product:pId,
+                count:count,
+                quantity:quantity
+            },
+            method:'post',
+            success:(response)=>{
+
+                if(response.removeProduct){
+                    location.reload()
+                    
+                }else{
+                    console.log(subtotal,price,"jelloooo")
+                    document.getElementById(pId).innerHTML=quantity+count
+                    document.getElementById(mrp1)
+                    document.getElementById('sub'+pId).innerHTML=(quantity+count)*price
+                     document.getElementById('final-total').innerHTML=subtotal+(count*parseInt(price))
+                    document.getElementById('subtotal1').innerHTML=subtotal1+(count*parseInt(price))
+                    document.getElementById('subtotal2').innerHTML=subtotal2+(count*parseInt(price))
+                    document.getElementById('mrp1').innerHTML=mrp1+(count*parseInt(mrp))
+
+                    
+                }
+            }
+        })
+
+}
+
+    }
+
+
+
+
+
+    function removeProduct(pId,cartId){
+
+        Swal.fire({
+  title: 'Do you want to Remove this product from the Cart?',
+  text: "",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Yes, Remove it!'
+}).then((result) => {
+  if (result.isConfirmed) {
+       
+        $.ajax({
+            url:'/remove-product-cart',
+            data:{
+                pId:pId,
+                cartId:cartId
+            },
+            method:'post',
+            success:(response)=>{
+                if(response){
+
+                   location.reload()
+                   }
+                 }
+       })       
+     }
+   })
+ }
+
+
+            
+        
+    
+
+
+let enter=0
+$('#coupon-check').submit((e)=>{
+    e.preventDefault()
+    
+                $.ajax({
+                    url:'/coupon-check',
+                    method:'post',
+                    data: $('#coupon-check').serialize(),
+                    success:(response)=>{
+                        console.log(response,"response11111111")
+                        if(enter==0){
+                        if(response.status== true){
+                            console.log(response,"response1")
+                           
+                           var span1 = document.createElement('li');
+                           var span2 = document.createElement('li');
+                           span1.innerHTML='Coupon Applied :<span class="text-danger">-'+response.discount+'</span>'
+                           span2.innerHTML='Final Total :<span class=" text-success">₹'+response.finalprice+'</span>'
+                           document.getElementById('totalList').appendChild(span1)
+                           document.getElementById('totalList').appendChild(span2)
+
+                           Swal.fire("you saved ₹"+response.discount,"Coupon Applied Successfully", "success")
+                           
+                          enter++
+                        }
+                        
+                        else{
+                            console.log(response,"response3")
+                             Swal.fire("INVALID COUPON","","failed")
+                         
+                        }
+                        }
+                    }
+                })
+    
+})
+          
+
+
+
+    
+
+  </script> 
+
+    
+</body>
+   
+
+</html>

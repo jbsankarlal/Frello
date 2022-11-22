@@ -1,0 +1,192 @@
+<!-- Content Start -->
+<div class="content">
+    <!-- Navbar Start -->
+    <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+        <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+            <h2 class="text-primary mb-0">
+                <i class="fa fa-user-edit"></i>
+            </h2>
+        </a>
+        <a href="#" class="sidebar-toggler flex-shrink-0">
+            <i class="fa fa-bars"></i>
+        </a>
+        <form class="d-none d-md-flex ms-4">
+            <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+        </form>
+        <div class="navbar-nav align-items-center ms-auto">
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fa fa-envelope me-lg-2"></i>
+                    <span class="d-none d-lg-inline-flex">Message</span>
+                </a>
+                
+            </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fa fa-bell me-lg-2"></i>
+                    <span class="d-none d-lg-inline-flex">Notification</span>
+                </a>
+                
+            </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <img class="rounded-circle me-lg-2" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                    <span class="d-none d-lg-inline-flex">ADMIN</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                    <a href="#" class="dropdown-item">My Profile</a>
+                    <a href="#" class="dropdown-item">Settings</a>
+                    <a href="/admin/adminLogout" class="dropdown-item">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+
+
+
+
+    <div class="container-fluid pt-4 px-4">
+        <div class="row g-4">
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-secondary text-center rounded p-4">
+                    
+                    <canvas id="myChart1"  style="width:100%;max-width:700px"></canvas>
+                </div>
+            </div>
+            <div class="col-sm-12 col-xl-6">
+                <div class="bg-secondary text-center rounded p-4">
+                    <canvas id="myChart2" style="width:100%;max-width:600px"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Sales Chart End -->
+
+
+    <!-- Recent Sales Start -->
+    <div class="container-fluid pt-4 px-4 mb-5">
+        <div class="bg-secondary text-center rounded p-4">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h6 class="mb-0">Recent Sales</h6>
+                <a href="/admin/orderMan">Show All</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                    <thead>
+                        <tr class="text-white">
+                           
+                            <th scope="col">Date</th>
+                            <th scope="col">Payment Method</th>
+                            <th scope="col">Contact</th>
+                            <th scope="col">Amount</th>
+                            <th scope="col">Status</th>
+                           
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{#each order}}
+                            <tr>
+                                
+                                <td>{{this.date}}</td>
+                                <td>{{this.paymentMathod}}</td>
+                                <td>{{this.deliveryDetails.mobile}}</td>
+                                <td>₹{{this.GrandTotal}}</td>
+                                <td class="text-warning">{{this.status}}</td>
+                                
+                            </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
+
+<script
+src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+</script>
+
+
+<script>
+const year =[]
+{{#each yearChart}}
+year.unshift('{{this.year}}')
+{{/each}}
+console.log(year,"year")
+
+
+const yearlyRevenue =[]
+{{#each yearChart}}
+yearlyRevenue.unshift('{{this.GrandTotal}}')
+
+{{/each}}
+console.log(yearlyRevenue,"months")
+
+
+var xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+var yValues = [55, 49, 44, 24, 15];
+var barColors = ["violet","blue","green","yellow","orange"];
+
+new Chart("myChart1", {
+  type: "line",
+  data: {
+    labels: year,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yearlyRevenue
+    }]
+  },
+  options: {
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Annual Sales"
+    }
+  }
+});
+</script>
+
+<script>
+
+const month =[]
+{{#each monthChart}}
+month.unshift('{{this.month}}')
+{{/each}}
+console.log(month,"months")
+
+
+const monthlyRevenue =[]
+{{#each monthChart}}
+monthlyRevenue.unshift('{{this.GrandTotal}}')
+console.log(monthlyRevenue,"months")
+{{/each}}
+
+
+var xValues = ["Italy", "France", "Spain", "USA", "Argentina"];
+var yValues = [55, 49, 44, 24, 15];
+var barColors = ["yellow","brown","yellow","brown","yellow","brown","yellow","brown","yellow","brown","yellow","brown",];
+
+new Chart("myChart2", {
+  type: "bar",
+  data: {
+    labels: month,
+    datasets: [{
+      backgroundColor: barColors,
+      data: monthlyRevenue
+    }]
+  },
+  options: {
+    legend: {display: false},
+    title: {
+      display: true,
+      text: "Monthly Sales"
+    }
+  }
+});
+</script>

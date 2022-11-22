@@ -1,0 +1,101 @@
+<!-- Content Start -->
+        <div class="content">
+            <!-- Navbar Start -->
+             <nav class="navbar navbar-expand bg-secondary navbar-dark sticky-top px-4 py-0">
+        <a href="index.html" class="navbar-brand d-flex d-lg-none me-4">
+            <h2 class="text-primary mb-0">
+                <i class="fa fa-user-edit"></i>
+            </h2>
+        </a>
+        <a href="#" class="sidebar-toggler flex-shrink-0">
+            <i class="fa fa-bars"></i>
+        </a>
+        <form class="d-none d-md-flex ms-4">
+            <input class="form-control bg-dark border-0" type="search" placeholder="Search">
+        </form>
+        <div class="navbar-nav align-items-center ms-auto">
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fa fa-envelope me-lg-2"></i>
+                    <span class="d-none d-lg-inline-flex">Message</span>
+                </a>
+                
+            </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fa fa-bell me-lg-2"></i>
+                    <span class="d-none d-lg-inline-flex">Notification</span>
+                </a>
+                
+            </div>
+            <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <img class="rounded-circle me-lg-2" src="img/user.jpg" alt="" style="width: 40px; height: 40px;">
+                    <span class="d-none d-lg-inline-flex">ADMIN</span>
+                </a>
+                <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                    <a href="#" class="dropdown-item">My Profile</a>
+                    <a href="#" class="dropdown-item">Settings</a>
+                    <a href="/admin/adminLogout" class="dropdown-item">Log Out</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+            <!-- Navbar End -->
+
+
+            <!-- Table Start -->
+            
+                    
+                    <div class="col-12">
+                        <div class="bg-black rounded h-100 p-4">
+                            <h6 class="mb-4">CATEGORY LIST</h6>
+                            <a href="/admin/addCat" class="btn btn-success mb-3" role="button">ADD NEW CATEGORY</a>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">SNo.</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Description</th>
+                                            <th scope="col">Images</th>
+                                            <th scope="col">Options</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        
+                                        {{#each category}}
+                                        <tr>
+                                            <th class="create_index"></th>
+                                            <td>{{this.catName}}</td>
+                                            <td>{{this.catDescrp}}</td>
+                                            <td><img src="../category-imgs/{{this.image}}" name="image" alt="" style="width: 100px; height: 100px"></td>
+                                             <td><a href="/admin/editCatt?id={{this._id}}"  role="button"><i class="bi bi-pencil-square fa-2x text-warning"></i></a> 
+                                             <a href="/admin/deleteCat/{{this._id}}"    role="button"><span class="bi bi-trash-fill fa-2x ms-3"></a></td>
+                                             
+                                        </tr>                                                   
+                                        {{/each}}
+                                    </tbody>
+                                </table>
+
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Table End -->
+
+           
+
+            
+        </div>
+        <!-- Content End -->
+
+
+        
+
+  <script>
+   var divs = document.querySelectorAll('.create_index'); for (var i = 0; i <
+    divs.length; ++i) { divs[i].innerHTML = i + 1; }
+  </script>   
