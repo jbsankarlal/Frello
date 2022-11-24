@@ -26,10 +26,11 @@ module.exports={
      verifyLogin:(req,res,next)=>{
       req.session.redirectTo = req.url
         if(req.session.userLoggedIn){
-
+            console.log(req.session.redirectTo,"if");
             next()
         }
         else{
+            console.log(req.session.redirectTo,"inside elseee");
             res.render('user/login',{user:false})
         }
 
@@ -41,12 +42,14 @@ module.exports={
     },
    
     addUsers:(userData)=>{
-        console.log(userData,"=========================>>>>>>>>>>>>>");
+        console.log(userData,"USERDATA>>>>>");
+        walletDetails=[]
         return new Promise(async(resolve,reject)=>{
             userData.password=await bcrypt.hash(userData.password,10)
             userData.status=true
             userData.referalId=ref
             userData.wallet=0
+            userData.walletDetails=walletDetails
             db.get().collection('users').insertOne(userData).then((data)=>{
             resolve(userData)
         })
@@ -124,10 +127,11 @@ module.exports={
         return new Promise(async (resolve,reject)=>{
            
             let productInfo= await db.get().collection('product').findOne({_id:ObjectId(pId)})
+            console.log(productInfo,"productinfo");
             let MRP=productInfo.prodMarketPrice
             let frelloPrice=productInfo.prodSellPrice
             let pName=productInfo.prodName
-
+            let imageMany=productInfo.imageMany
 
             let proObj={
                 item:ObjectId(pId),
@@ -135,7 +139,9 @@ module.exports={
                 MRP:MRP,
                 frelloPrice:frelloPrice,
                 pName:pName,
-                statusbar:true
+                statusbar:true,
+                imageMany:imageMany
+                
              
             }
             let usercart= await db.get().collection('cart').findOne({user:ObjectId(userId)})
@@ -249,7 +255,7 @@ module.exports={
         },
 
         changeProductQuantity:(details)=>{
-            console.log(details,"++++++++++++++++++++++++++++++++++++++++PPPPPPPPPPPPP");
+            console.log(details,"details");
             details.count=parseInt(details.count)
             details.quantity=parseInt(details.quantity)
             
@@ -332,7 +338,7 @@ module.exports={
                     }
                     
                 ]).toArray()
-               console.log(total,"++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+               console.log(total,"total");
                 
                 if(total<1){
                     resolve(0)
@@ -399,7 +405,7 @@ module.exports={
         },
 
         placeOrder:(order,products,total,discount,mrp)=>{
-            console.log(order,"<<<<<<",products,">>>>>>>>>>>",total,"<<<<<<<<<<<<<<<<<<<<<>>>>>",mrp,">>>>>>>>>>>>>>>>>>");
+            console.log(order,"<<<<<<",products,"total",total,"mrp",mrp);
             return new Promise((resolve,reject)=>{
                 let status=order['payment-method']=== 'COD'|| 'Wallet' ? 'Placed':'Pending'
                 let subtotal=total+discount
@@ -415,7 +421,7 @@ module.exports={
                     products.statusbar=true,
                     products.statbar=false
                 });
-                console.log(products,"products8888888888888888");
+                console.log(products,"products");
                 let orderObj={
                     deliveryDetails:{
                         
@@ -460,7 +466,7 @@ module.exports={
           return new Promise(async(resolve,reject)=>{
             let cart= await db.get().collection('cart').findOne({user:ObjectId(userId)})
             console.log(cart,"?????? cart ????????");
-            resolve(cart.products)
+            resolve(cart?.products)
           })
         },
 
@@ -541,11 +547,19 @@ module.exports={
                     }
                     
                 ]).toArray()
-                console.log(orderItems,"pouuuuuuuuuuuuuuuuuuuuuuuorderrrrrr");
+                console.log(orderItems,"orderrrr");
               resolve(orderItems)
               
             })
 
+        },
+
+        getSingleProduct:(pId)=>{
+            return new Promise(async(resolve,reject)=>{
+            let prod= await db.get().collection('order').findOne({'products.item':ObjectId(pId)})
+             resolve(prod)
+             console.log(prod,"producyy");
+            })
         },
 
 
@@ -640,7 +654,7 @@ module.exports={
                     console.log(err)
                 }
                 else{
-                    console.log(order,"iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+                    console.log(order,"iorder");
                 resolve(order)
                 }
                 
@@ -766,7 +780,8 @@ module.exports={
         
            let cancel= await db.get().collection('order').updateOne({_id:ObjectId(oId),'products.item':ObjectId(pId)},
             {
-                $set: {'products.$.status':"Cancelled",'products.$.statbar':true,'products.$.statusbar':false}
+                $set: {'products.$.status':"Cancel Requested",'products.$.statbar':true,'products.$.statusbar':false}
+                
             }
             )
             resolve(cancel)
@@ -955,16 +970,24 @@ module.exports={
 
     checkCoupon:(couponData,userId,total)=>{
         console.log(userId,"]]]]]]]]]]]]]]]]]]]]]]");
+        let tot=total
         return new Promise(async(resolve,reject)=>{
             let couponCheck= await db.get().collection('coupons').findOne({couponCode:couponData.couponName})
 
             if(couponCheck == null){
                 let coupon={}
                 coupon.status=false
-                coupon.err="invalid"
+                coupon.err="invalid Coupon"
                 resolve(coupon)
+                console.log(coupon,"couponaaaaaaaa");
             }else{
-                resolve(couponCheck)
+                let couponCh={}
+                couponCh.total=tot
+                couponCh.data=couponCheck
+               
+
+                resolve(couponCh)
+                console.log(couponCh,"couponCheckaaaaaaaaaaaaa");
             }
            
          
@@ -972,18 +995,43 @@ module.exports={
     },
 
     checkReferal:(refData)=>{
-        console.log(refData,"+++++++++++++++++++++++++++++refDaata");
+        console.log(refData,"refDaata");
         
-        return new Promise((resolve,reject)=>{
-            
+        return new Promise(async(resolve,reject)=>{
+           let userRef=await db.get().collection('users').findOne({referalId:refData.referal})
+           console.log(userRef,"userRef");
+          
+           
+            let walletDataNew={
+                details:"Bonus from Referral",
+                referer:userRef.username,
+                date: new Date(),
+                amount:50
+            }
+
+            let walletData={
+                details:"Bonus from Referral",
+                referer:refData.username,
+                date: new Date(),
+                amount:100
+            }
+
+
             db.get().collection('users').updateOne({referalId:refData.referal},
                 {
-                    $inc:{wallet:100}
+                    $inc:{wallet:100},
+               
+                    $push:{walletDetails:walletData}
                 })
-            db.get().collection('users').updateOne({mobileNo:refData.mobileNo},{
-                $inc:{ wallet: 50 }
+                console.log(refData.username,"refData.username");
+                
+           db.get().collection('users').updateOne({username:refData.username},{
             
-            }) 
+                $inc:{ wallet: 50 },
+           
+                $push:{walletDetails:walletDataNew}
+            })
+           
                 resolve()
             
         })
@@ -996,6 +1044,16 @@ module.exports={
         resolve(profile)
         })
     },
+
+    getWalletHistory:(uId)=>{
+       return new Promise(async(resolve,reject)=>{
+       let history=await db.get().collection('users').findOne({_id:ObjectId(uId)})
+        resolve(history.walletDetails)
+       })
+    },
+
+
+
 
     walletPayment:(total,userId,orderId)=>{
         let Placed=true
@@ -1012,6 +1070,8 @@ module.exports={
         })
     },
 
+   
+
     getAllCoupons:()=>{
         return new Promise(async(resolve,reject)=>{
            let coupon= await db.get().collection('coupons').find().toArray()
@@ -1020,7 +1080,7 @@ module.exports={
     },
 
     editAddress:(aDetails,aId)=>{
-        console.log(aDetails.name,"pppppppppppppppppppp66666666666666666666");
+        console.log(aDetails.name,"adetaisl");
         
             
 
@@ -1047,7 +1107,7 @@ module.exports={
       },
 
       getAllOrders1:(userId,page)=>{
-        console.log(page,"pageajuuuuuuuuuuuuuuuu");
+        console.log(page,"page");
         let skip=(parseInt(page)-1)*8
         return new Promise(async(resolve,reject)=>{
           let orders= await db.get().collection('order').aggregate([
@@ -1061,7 +1121,7 @@ module.exports={
               $unwind:'$deliveryDetails'
             },
             {
-              $project:{invoice:'$products.invoice',date:1,name:'$deliveryDetails.name',mobile:'$deliveryDetails.mobile',item:'$products.item',quantity:'$products.quantity',MRP:'$products.MRP',frelloPrice:'$products.frelloPrice',name:'$products.pName',paymentMathod:1,userId:1,status:'$products.status',statusbar:'$products.statusbar',statbar:'$products.statbar',subtotal:{$multiply:['$products.quantity',{$convert:{input: '$products.frelloPrice',to:'int',onError:0}}]},subMRP:{$multiply:['$products.quantity',{$convert:{input: '$products.MRP',to:'int',onError:0}}]}}
+              $project:{invoice:'$products.invoice',date:1,name:'$deliveryDetails.name',mobile:'$deliveryDetails.mobile',item:'$products.item',quantity:'$products.quantity',MRP:'$products.MRP',image:'$products.imageMany',frelloPrice:'$products.frelloPrice',name:'$products.pName',paymentMathod:1,userId:1,status:'$products.status',statusbar:'$products.statusbar',statbar:'$products.statbar',subtotal:{$multiply:['$products.quantity',{$convert:{input: '$products.frelloPrice',to:'int',onError:0}}]},subMRP:{$multiply:['$products.quantity',{$convert:{input: '$products.MRP',to:'int',onError:0}}]}}
             },
             {
                $sort:{date:-1}
@@ -1131,9 +1191,7 @@ module.exports={
             let cost= await db.get().collection('product').find({prodSellPrice:{$gte:minVal,$lte:maxVal}}).toArray()
             console.log(cost,"cost");
             resolve(cost)
-
-         })
-            
+         })    
         },
 
 

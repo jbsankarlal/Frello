@@ -1,4 +1,4 @@
-function changeStatus(oId,pId,frelloPrice,userId,PM){
+function changeStatus(oId,pId,frelloPrice,userId,quantity,PM){
    console.log(pId,frelloPrice,userId,PM)
     let stat=document.getElementById(pId)
     let statt=stat.options[stat.selectedIndex].text
@@ -11,6 +11,7 @@ function changeStatus(oId,pId,frelloPrice,userId,PM){
             status:statt,
             orderAmt:frelloPrice,
             user:userId,
+            quantity:quantity,
             payMethod:PM
 
         },

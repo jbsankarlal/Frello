@@ -6,8 +6,8 @@ const { verifyLogin } = require('../helpers/productHelpers');
 var userHelper=require('../helpers/userHelpers')
 const multer = require('multer');
 
-/* GET users listing. */
 
+//*******************************multer for category********************************* */
 const multerStorageCategory= multer.diskStorage({
   destination: function(req,file,cb){
     cb(null, "./public/category-imgs")
@@ -23,7 +23,7 @@ uploadOne
 
 
 
-// <================multer===============>
+//*******************************multer for multiple products*************************** */
 const multerStorageProduct = multer.diskStorage({
   destination: function(req,file,cb){
     cb(null, "./public/product-imgs");
@@ -36,7 +36,9 @@ const multerStorageProduct = multer.diskStorage({
 const uploadMany = multer({storage: multerStorageProduct});
 /*const uploadMultiFile= uploadMany.fields([{name:'imagemany', maxCount:5}])
 uploadMany8*/
-// <================multer===============>
+
+
+//*******************************ADMIN DASHBOARD***************************
 
 
 router.get('/dash', verifyLogin,async function (req, res, next) {
@@ -76,8 +78,7 @@ router.get('/dash', verifyLogin,async function (req, res, next) {
   let order=orders.order
   order.forEach(order => {
     order.date = order.date.toString().substr(4, 17)
-    
-      });
+  });
   let total=orders.totalcount  
   let monthChart= await productHelper.getMonthReport()
   let yearChart= await productHelper.getYearlyReport()
@@ -86,7 +87,7 @@ router.get('/dash', verifyLogin,async function (req, res, next) {
   })
   
   
-
+//*******************************USER MANAGEMENT***************************
 
 router.get('/userMan',verifyLogin,async function(req, res, next) {
 
@@ -96,16 +97,17 @@ router.get('/userMan',verifyLogin,async function(req, res, next) {
   for(i=1;i<=pageCount;i++){
    count.push(i)
   }
-  console.log(count,"coiunt");
+  console.log(count,"count");
   let users=await productHelper.getUserManDetails(req.query.id)
 console.log(req.query.id,"reqqueryid");
 productHelper.getAllUsers().then((use)=>{
 
-  res.render('admin/users',{layout:'adminLayout',users,totalUsers,use,count})
+res.render('admin/users',{layout:'adminLayout',users,totalUsers,use,count})
  })
- 
-  
 });
+
+
+//*******************************PRODUCT MANAGEMENT***************************
 
 router.get('/productMan',verifyLogin, async function(req, res, next) {
   let totalproducts=await productHelper.totalProdCount()
@@ -124,15 +126,16 @@ console.log(req.query.id,"reqqueryid");
   
 });
 
+
 router.get('/deleteUser/:pId', function(req, res, next) {
   console.log(req.params.pId)
-  productHelper.deleteUser(req.params.pId).then((result)=>{
-  res.redirect("/admin/UserMan")
+   productHelper.deleteUser(req.params.pId).then((result)=>{
+    res.redirect("/admin/UserMan")
     })
   });
   
 
-
+//*******************************ADD PRODUCTS***************************
 
 router.get('/addProd',verifyLogin, function(req, res, next) {
   let add= req.session.alert
@@ -142,12 +145,15 @@ router.get('/addProd',verifyLogin, function(req, res, next) {
 })
 });
 
+//*******************************CATEGORY MANAGEMENT***************************
+
 router.get('/catMan',verifyLogin, function(req, res, next) {
   productHelper.getAllCategory().then((category)=>{
   res.render('admin/category',{layout:'adminLayout',category})
 })
 });
 
+//*******************************ADD CATEGORY***************************
 
 router.get('/addCat',verifyLogin, function(req, res, next) {
   let add1=req.session.alert
@@ -157,10 +163,9 @@ router.get('/addCat',verifyLogin, function(req, res, next) {
 });
 
 
+//*******************************ADD PRODUCTS***************************
 
 router.post('/addProd',uploadMany.array('imageMany'),(req,res)=>{
- 
-    
       let imageMany=[]
       req.files.forEach((value,index)=>{
         console.log(value,"vali=ue");
@@ -170,23 +175,22 @@ router.post('/addProd',uploadMany.array('imageMany'),(req,res)=>{
       req.body.imageMany=imageMany
       productHelper.addNewProduct(req.body).then((id)=>{
     res.redirect('/admin/addProd')
-  
-  
-
-  })
-  
+   })  
 })
 
+
+//*******************************ADD CATEGORY***************************
+
 router.post('/addCat',uploadSingleFile, (req, res, next)=> {
-console.log(req.body,"oooooooooooooooooooooooooooooooooooooo")
+console.log(req.body,"REQ.BODY")
 req.body.image= req.files.image[0].filename 
 
-   productHelper.addCategory(req.body)
+productHelper.addCategory(req.body)
 res.redirect('/admin/addCat')
   })
   
 
-// <-----------------products---------------->
+//*******************************DELETE PRODUCTS***************************
 
 
 router.get('/deleteProd/:pId', function(req, res, next) {
@@ -196,6 +200,8 @@ res.redirect("/admin/productMan")
   })
 });
 
+
+//*******************************EDIT PRODUCTS***************************
 
 router.get('/editProdt/',verifyLogin, async (req,res,next)=>{
   let add= req.session.alert
@@ -207,9 +213,11 @@ productHelper.getAllCategory().then((category)=>{
 })
 
 router.post('/editProd/:id',uploadMany.array('imageMany'),async(req,res)=>{
+  console.log(req.files,"reqq.filessss");
   let imageMany=[]
   if(req.files.length==0){
   imageMany= await productHelper.fetchImages(req.params.id)
+  console.log(imageMany,"imageMany");
   }
   else{
     req.files.forEach((value,index)=>{
@@ -218,21 +226,11 @@ router.post('/editProd/:id',uploadMany.array('imageMany'),async(req,res)=>{
   }
   req.body.imageMany =imageMany
   productHelper.updateProduct(req.params.id,req.body).then(()=>{
-    
-    
-        res.redirect('/admin/productMan')
-  }
-      
+   res.redirect('/admin/productMan')
+  }   
    )})
 
-   
-     
-  
-
-
-
-
-// <----------------category------------>
+// *******************************DELETE CATEGORY***************************
 
 router.get('/deleteCat/:cId', function(req, res, next) {
   console.log(req.params.cId)
@@ -240,8 +238,9 @@ router.get('/deleteCat/:cId', function(req, res, next) {
   res.redirect("/admin/catMan")
     })
   });
-  
-  
+
+//*******************************EDIT CATEGORY***************************
+   
   router.get('/editCatt/',uploadSingleFile, async (req,res,next)=>{
   console.log(req.query.id);
   let product=await productHelper.getCatDetails(req.query.id)
@@ -256,16 +255,12 @@ router.get('/deleteCat/:cId', function(req, res, next) {
       image1= await req.files.image[0].filename
     }
     req.body.image=image1
-  
     productHelper.updateCategory(req.params.id,req.body).then(()=>{
-      
-      res.redirect('/admin/catMan')
-     
-     
+   res.redirect('/admin/catMan')
     })
   })
       
-// <-----------------blocking--------------->
+// *******************************BLOCKING & UNBLOCKING***************************
 
 router.get('/blockUser/:id',(req,res)=>{
   console.log(req.params.id)
@@ -281,7 +276,7 @@ router.get('/blockUser/:id',(req,res)=>{
       })
     });
 
-    // <-------------------admin login-------------->
+//*******************************ADMIN LOGIN***************************
 
 const CentralAdmin="sankar@admin.com"
 const CentralPassword="sachin"
@@ -316,6 +311,8 @@ router.post('/admin',(req,res)=>{
 })
 
 
+//*******************************ADMIN LOGOUT***************************
+
 router.get('/adminLogout',function(req, res) {
   res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
  
@@ -327,7 +324,7 @@ router.get('/adminLogout',function(req, res) {
   });
 
 
-// <-------------------orders------------------>
+// *******************************ORDER MANAGEMENT ***************************
 router.get('/orderMan',verifyLogin, async (req,res,next)=>{
  if(!req.query.id){
   req.query.id=1
@@ -350,13 +347,14 @@ order.date = order.date.toString().substr(0, 10)
 
 
   });
+  console.log(order,"ordersssret");
 
 res.render('admin/order',{layout:'adminLayout',order,count})
 })
   })
 
  
-
+//*******************************EDIT ORDERS ***************************
 router.get('/edit-orders/', async (req,res,next)=>{
   let order=await productHelper.getAllOrders(req.query.id)
     res.render('admin/adminEditOrder',{layout:'adminLayout',order}) 
@@ -373,21 +371,36 @@ router.get('/edit-orders/', async (req,res,next)=>{
     })
   })
 
+
+//*******************************UPDATE ORDER STATUS ***************************
+
   router.post('/update-order-status', (req,res,next)=>{
     
   productHelper.updateOrderStatus(req.body).then(()=>{
     console.log(req.body,"mmmmmmmmmmmmmmmm");
     res.json()
-  
-   
   })
   })
+
+
+//*******************************REPORTS***************************
 
 router.get('/reports',verifyLogin,(req,res,next)=>{
   res.render('admin/Reports',{layout:'adminLayout'})
 })
 
-// <------------coupon------------>
+router.get('/salesreport',async(req,res)=>{
+  res.render('admin/Reports',{layout:'adminLayout'})
+})
+
+router.post('/salesreport',async(req,res)=>{
+console.log(req.body,"bodyyyy");
+let report= await productHelper.generateReportt(req.body.from,req.body.to)
+res.render('admin/Reports',{layout:'adminLayout',report})
+  })
+
+
+// *******************************COUPON MANAGEMENT***************************
 
 router.get('/coupons',verifyLogin,(req,res,next)=>{
   productHelper.getAllCoupons().then((coupons)=>{
@@ -413,19 +426,8 @@ router.get('/delete-coupon/:cId', function(req, res, next) {
     })
   });
 
-  // <============SALES REPORT=============>
-  router.get('/salesreport',async(req,res)=>{
-    
-    res.render('admin/Reports',{layout:'adminLayout'})
-      })
+  //*******************************BANNER MANAGEMENT***************************
 
-  router.post('/salesreport',async(req,res)=>{
-  console.log(req.body,"bodyyyy");
-  let report= await productHelper.generateReportt(req.body.from,req.body.to)
-  res.render('admin/Reports',{layout:'adminLayout',report})
-    })
-   
-  // <=============BANNERS==============>
   router.get('/banner',verifyLogin,async(req,res)=>{
     productHelper.setBanner().then((banner)=>{
       res.render('admin/banner',{layout:'adminLayout',banner})
@@ -441,4 +443,5 @@ router.get('/delete-coupon/:cId', function(req, res, next) {
     res.redirect('/admin/banner')
     })
     })
+
 module.exports = router;

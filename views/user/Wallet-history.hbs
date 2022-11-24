@@ -1,0 +1,34 @@
+<h2 class=" text-center mt-5 mb-3 font-weight-bold" style="color: #eb4b07;">WALLET HISTORY</h2>
+
+<section class="gradient-custom">
+<div class="container "style="min-height: 50vh;">
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">SLNo.</th>
+      <th scope="col">Date</th>
+      <th scope="col">Details</th>
+      <th scope="col">From</th>
+      <th scope="col">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each walletHistory}}
+    <tr>
+      <td><p class="create_index"></p></td>
+      <td>{{this.date}}</td>
+      <td>{{this.details}}</td>
+      <td>{{this.referer}}</td>
+      <td>₹{{this.amount}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+</div>
+</section>
+<script>
+   var divs = document.querySelectorAll('.create_index'); for (var i = 0; i <
+    divs.length; ++i) { divs[i].innerHTML = i + 1; }
+  </script>   

@@ -52,7 +52,7 @@
                                   
                                 <tr>
                                     
-                                    <td class="cart-pic first-row"><img src="/product-imgs/{{this.products._id}}.jpg" alt="" style="height: 100px ;width:100px"></td>
+                                    <td class="cart-pic first-row"><img src="/product-imgs/{{this.products.imageMany.[0]}}" alt="" style="height: 100px ;width:100px"></td>
                                     <td class="cart-title first-row text-center">
                                         <h5>{{this.products.prodName}}</h5>
                                     </td>
@@ -94,12 +94,13 @@
                             <div class="discount-coupon">
                                 <h4 class=" font-weight-bold mb-3" style="color: #eb4b07;">OFFERS & COUPONS</h4>
                                 {{#each coupon}}
-                                <p><span class="text-primary font-weight-bold">{{this.couponCode}}</span>-{{this.discount}}% discount upto ₹{{this.max}}</p>
+                                <p><span class="text-primary font-weight-bold">{{this.couponCode}}</span>-{{this.discount}}% discount upto ₹{{this.max}} on orders above ₹{{this.min}}</p>
                                 {{/each}}
 
                                 <form id="coupon-check" action="" class="coupon-form border border-danger" style="border-color: #eb4b07;">
                                     <input type="text" name="couponName" placeholder="Enter your coupon code here">
-                                    <button type="submit" class="site-btn coupon-btn" style="color: #eb4b07;">Apply</button>
+                                    <button type="submit" id="apply" class="site-btn coupon-btn" style="color: #eb4b07;display:block;">Apply</button>
+                                    <button type="submit" id="remove" class="site-btn coupon-btn" style="color: #eb4b07;display:none;">Apply</button>
                                 </form>
                             </div>
                         </div>
@@ -286,8 +287,9 @@ $('#coupon-check').submit((e)=>{
                            Swal.fire("you saved ₹"+response.discount,"Coupon Applied Successfully", "success")
                            
                           enter++
+                          
+
                         }
-                        
                         else{
                             console.log(response,"response3")
                              Swal.fire("INVALID COUPON","","failed")
@@ -295,6 +297,8 @@ $('#coupon-check').submit((e)=>{
                         }
                         }
                     }
+                    
+        
                 })
     
 })

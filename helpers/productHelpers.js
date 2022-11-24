@@ -5,39 +5,7 @@ var ObjectId =require('mongodb').ObjectId
 
 module.exports={
    
-    // addProduct:async (product,callback)=>{
-    //     console.log(product);
-    //     let pName=product.ProdName
-    //     let mPrice=product.prodMarketPrice
-    //     let sPrice=product.prodSellPrice
-
-    //     let sameProd=await db.get().collection('product').findOne({prodName:pName})
-    //     console.log(sameProd,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    //     if(sameProd){
-            
-    //       console.log("same product exists");
-        
-    //     if(sPrice>=mPrice){
-    //       log("market price should me more")
-    //     }
-        
-    //     else{
-    //       db.get().collection('product').insertOne(product).then((data)=>{
-    //         callback(data.insertedId)
-    //         console.log(data)
-    //       })
-         
-    //     }
-    //   }
-    //     else{
-    //       db.get().collection('product').insertOne(product).then((data)=>{
-    //         callback(data.insertedId)
-    //         console.log(data)
-    //       })
-          
-    //     }
-        
-    // },
+    
 
     verifyLogin:(req,res,next)=>{
  
@@ -82,16 +50,16 @@ module.exports={
     },
 
     fetchImages:(pId)=>{
-      return new Promise((resolve,reject)=>{
-       let data= db.get().collection('product').findOne({_id:ObjectId(pId)})
+      return new Promise(async(resolve,reject)=>{
+       let data= await db.get().collection('product').findOne({_id:ObjectId(pId)})
        console.log(data,"dataaaa");
        resolve(data.imageMany)
       })
     },
 
     fetchImg:(pId)=>{
-      return new Promise((resolve,reject)=>{
-       let data= db.get().collection('category').findOne({_id:ObjectId(pId)})
+      return new Promise(async(resolve,reject)=>{
+       let data=await db.get().collection('category').findOne({_id:ObjectId(pId)})
        console.log(data,"dataaaa");
        resolve(data.image)
       })
@@ -130,7 +98,7 @@ getAllProductt:(page)=>{
   return new Promise(async(resolve,reject)=>{
     let skip=(parseInt(page)-1)*9
     console.log(skip,"Skipp",page);
-    let prod= await db.get().collection('product').find().skip(skip).limit(9).toArray()
+    let prod= await db.get().collection('product').find().sort({_id:-1}).skip(skip).limit(9).toArray()
     
     resolve(prod)
   })
@@ -167,7 +135,7 @@ getAllOrders:(page)=>{
         $unwind:'$deliveryDetails'
       },
       {
-        $project:{invoice:'$products.invoice',date:1,name:'$deliveryDetails.name',mobile:'$deliveryDetails.mobile',item:'$products.item',quantity:'$products.quantity',frelloPrice:'$products.frelloPrice',paymentMathod:1,userId:1,status:'$products.status'}
+        $project:{invoice:'$products.invoice',date:1,name:'$deliveryDetails.name',mobile:'$deliveryDetails.mobile',item:'$products.item',productname:'$products.pName',image:'$products.imageMany',quantity:'$products.quantity',frelloPrice:'$products.frelloPrice',paymentMathod:1,userId:1,status:'$products.status'}
       },
       {
          $sort:{date:-1}
@@ -288,19 +256,30 @@ unblockUser:(Id)=>{
 
  updateOrderStatus:(data)=>{
   let totalAmt
-  totalAmt=parseInt(data.orderAmt)
-  console.log(data,"DATAAAAAAAAA");
+  totalAmt=(parseInt(data.orderAmt)*parseInt(data.quantity))
+
+  console.log(data,"DATAAAAAAAAAAA");
+
+  let walletdata={
+    details:"Return on Order Cancellation",
+    refere:"Frello",
+    date: new Date(),
+    amount: parseInt(totalAmt)
+  }
 
     return new Promise((resolve,reject)=>{
 
-      if(data.status=='Return Completed' && data.payMethod!=='COD' || data.status=='Cancelled' && data.payMethod!=='COD' ){
+      if(data.status=='Return Completed' && data.payMethod!=='COD' || data.status=='Order Cancelled' && data.payMethod!=='COD' ){
+        console.log(data.cartId,"datacarttt");
       db.get().collection('order').updateOne({_id:ObjectId(data.orderId),'products.item':ObjectId(data.cartId)},
       {
         $set:{'products.$.status': data.status}
       })
       
       db.get().collection('users').updateOne({_id:ObjectId(data.user)},{
-        $inc:{wallet:parseInt(totalAmt)}
+        $inc:{wallet:parseInt(totalAmt)},
+        $push:{walletDetails: walletdata}
+      
      })
      resolve()
     }

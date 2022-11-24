@@ -72,11 +72,14 @@
                                             <td class="text-warning">{{this.name}}</td>
                                             <td>{{this.date}}</td>
                                             <td style="color: yellow;">{{this.mobile}}</td>
-                                            <td>{{this.item}}</td>
+                                            <td>
+                                                 <img src="/product-imgs/{{this.image.[0]}}" alt="" class="mb-2" style="height: 100px ;width:100px"><br>
+                                                 <p class="mb-1 font-weight-bold" style="font-size:15px;color:white">{{this.productname}}</p>
+                                            </td>
                                             <td>{{this.paymentMathod}}</td>
                                             <td>{{this.frelloPrice}}</td>
                                             <td>
-                                                <select onchange="changeStatus('{{this._id}}','{{this.item}}','{{this.frelloPrice}}','{{this.userId}}','{{this.paymentMathod}}')" name="orderstatus" id="{{this.item}}">
+                                                <select onchange="changeStatus('{{this._id}}','{{this.item}}','{{this.frelloPrice}}','{{this.userId}}','{{this.quantity}}','{{this.paymentMathod}}')" name="orderstatus" id="{{this.item}}">
                                                     <option selected value="{{this.status}}" class="text-success">{{this.status}}</option>
 
                                                     {{#isEqual this.status 'Placed'}}
@@ -104,6 +107,14 @@
                                                    
                                                     <option value="Delivered">Delivered</option>
                                                     {{/isEqual}}
+
+                                                    
+                                                     {{#isEqual this.status 'Cancel Requested'}}
+
+                                                    <option value="Order Cancelled">Order Cancelled</option>
+                                                    {{/isEqual}}
+
+                        
 
                                                      {{#isEqual this.status 'Return Requested'}}
                                                    

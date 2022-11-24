@@ -28,16 +28,16 @@
                                        <h6 class=" font-weight-bold mt-2" style="color: #eb4b07;">OFFERS & COUPONS</h6>
                                        {{#each coupon}}
                                        <div class="col-lg-12">
-                                       <p><span class="text-primary font-weight-bold">{{this.couponCode}}</span>-{{this.discount}}% discount upto ₹{{this.max}} on purchase above ₹</p>
+                                       <p><span class="text-primary font-weight-bold">{{this.couponCode}}</span>-{{this.discount}}% discount upto ₹{{this.max}} on orders above ₹{{this.min}}</p>
                                        </div>
                                        {{/each}}
                                           <form id="coupon-check2" action="" class="coupon-form border border-danger" style="border-color: #eb4b07;">
                                            <input type="text" name="couponName" placeholder="Enter your coupon here">
-                                          <button  id="apply" name="apply" type="submit"  style="color: #eb4b07; ">Apply</button>
-                                         
-                                        
+                                          <button  id="apply" name="apply" type="submit" class="site-btn coupon-btn" style="color: #eb4b07;">Apply</button>
+                                          
+                        
                                        </form>
-                                        <button  id="remove" name="remove" type="submit" class="site-btn coupon-btn" style="color: #eb4b07;display:none">Remove</button>
+                                        
                                      </div>
                                      </div>
                                      
@@ -96,7 +96,7 @@
                                 <ul class="order-table">
                                     <li>Product <span>Total</span></li>
                                     {{#if productr}}
-                                    <li class="fw-normal">{{productr.prodName}} x {{this.quantity}} <span>₹{{productr.prodSellPrice}}</span></li>
+                                    <li class="fw-normal">{{productr.prodName}} x {{this.quantity}} <span>₹{{productr.prodSellPrice}} x {{this.quantity}}</span></li>
                                     
                                     <li class="fw-normal text-danger">Discount:<span>₹{{discountt}}</span></li>
                                     <li class="fw-normal">Subtotal <span>₹{{totall}}</span></li>
@@ -415,19 +415,27 @@ $('#coupon-check2').submit((e)=>{
                     method:'post',
                     data: $('#coupon-check2').serialize(),
                     success:(response)=>{
+                      console.log(response,"response")
                         if(entry==0){
-                        if(response){
-                            console.log(response,"response")
+                        if(response.status){
+                          console.log("hello")
+                            
                            
-                           
-
                            Swal.fire("you saved ₹"+response.discount,"Coupon Applied Successfully", "success")
-                           location.reload()
+                          location.reload()
                            
                           entry++
                           
                         }
-                        }else{
+                        else{
+                          console.log("hii")
+                             Swal.fire("Coupon Applicable Only on Orders above ₹500","sorry","failed")
+                           location.reload()
+                           
+                        }
+                        
+                        }
+                        else{
                              Swal.fire("Ofer can be applied Only ONCE","sorry","failed")
                            
                            
