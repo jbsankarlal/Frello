@@ -508,7 +508,7 @@ module.exports = {
 
   setBanner: () => {
     return new Promise(async (resolve, reject) => {
-      let banner = await db.get()?.collection("banner")?.find()?.toArray();
+      let banner = await db.get().collection("banner").find().toArray();
       resolve(banner);
     });
   },
