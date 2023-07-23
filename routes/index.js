@@ -6,10 +6,12 @@ var productHelper = require("../helpers/productHelpers");
 const { route } = require("./admin");
 const userHelpers = require("../helpers/userHelpers");
 const { verifyLogin, verifyNonLogin } = require("../helpers/userHelpers");
-const accountSid = process.env.TWILIO_ACCOUNT_SID;
-const authToken = process.env.TWILIO_AUTH_TOKEN;
-const serviceId = process.env.TWILIO_SERVICE_ID;
-const client = require("twilio")(accountSid, authToken);
+// const accountSid = process.env.TWILIO_ACCOUNT_SID;
+// console.log(process.env.TWILIO_AUTH_TOKEN, "auth token");
+// console.log(process.env.TWILIO_SERVICE_ID, "service id");
+// const authToken = process.env.TWILIO_AUTH_TOKEN;
+// const serviceId = process.env.TWILIO_SERVICE_ID;
+// const client = require("twilio")(accountSid, authToken);
 
 //*******************************LANDING PAGE***************************
 
@@ -131,62 +133,62 @@ router.get("/loggin", verifyLogin, function (req, res, next) {
 
 //*******************************OTP LOGIN***************************
 
-router.get("/otploggin", function (req, res, next) {
-  res.render("user/otplogin", { user: false });
-});
+// router.get("/otploggin", function (req, res, next) {
+//   res.render("user/otplogin", { user: false });
+// });
 
-router.post("/otploggin", (req, res, next) => {
-  userHelper.doLogin(req.body).then((response) => {
-    if (response.status == 222) {
-      res.render("user/otplogin", {});
-    } else if (response.status) {
-      let mobileNumber = `+91${req.body.mobile}`;
-      console.log(mobileNumber);
-      req.session.Phoneno = mobileNumber;
+// router.post("/otploggin", (req, res, next) => {
+//   userHelper.doLogin(req.body).then((response) => {
+//     if (response.status == 222) {
+//       res.render("user/otplogin", {});
+//     } else if (response.status) {
+//       let mobileNumber = `+91${req.body.mobile}`;
+//       console.log(mobileNumber);
+//       req.session.Phoneno = mobileNumber;
 
-      client.verify.v2
-        .services(serviceId)
-        .verifications.create({ to: mobileNumber, channel: "sms" })
-        .then((verification) => {
-          console.log(verification.status);
-          req.session.otpSended = true;
-          let otpsend = req.session.otpSended;
-          req.session.userPre = response.user;
-          console.log(mobileNumber);
-          res.render("user/otplogin", { otpsend });
-        });
-    } else {
-      res.render("user/otplogin", { user: true });
-    }
-  });
-});
+//       client.verify.v2
+//         .services(serviceId)
+//         .verifications.create({ to: mobileNumber, channel: "sms" })
+//         .then((verification) => {
+//           console.log(verification.status);
+//           req.session.otpSended = true;
+//           let otpsend = req.session.otpSended;
+//           req.session.userPre = response.user;
+//           console.log(mobileNumber);
+//           res.render("user/otplogin", { otpsend });
+//         });
+//     } else {
+//       res.render("user/otplogin", { user: true });
+//     }
+//   });
+// });
 
 //*******************************VERIFY OTP***************************
 
-router.post("/verifyotp", (req, res, next) => {
-  let mobileNumber = req.session.Phoneno;
-  let otp = req.body.otp;
-  client.verify.v2
-    .services(serviceId)
-    .verificationChecks.create({ to: mobileNumber, code: otp })
-    .then((verification_check) => {
-      console.log(verification_check.status);
-      if (verification_check.status == "approved") {
-        req.session.user = req.session.userPre;
-        console.log("verify otp", req.session.user);
-        req.session.userLoggedIn = true;
-        res.redirect("/");
-      } else {
-        req.session.otpSended = true;
-        let otpsend = req.session.otpSended;
-        req.session.userLoginErr = "Invalid otp";
-        res.render("user/otplogin", {
-          loginErr: "Entered otp is invalid",
-          otpsend,
-        });
-      }
-    });
-});
+// router.post("/verifyotp", (req, res, next) => {
+//   let mobileNumber = req.session.Phoneno;
+//   let otp = req.body.otp;
+//   client.verify.v2
+//     .services(serviceId)
+//     .verificationChecks.create({ to: mobileNumber, code: otp })
+//     .then((verification_check) => {
+//       console.log(verification_check.status);
+//       if (verification_check.status == "approved") {
+//         req.session.user = req.session.userPre;
+//         console.log("verify otp", req.session.user);
+//         req.session.userLoggedIn = true;
+//         res.redirect("/");
+//       } else {
+//         req.session.otpSended = true;
+//         let otpsend = req.session.otpSended;
+//         req.session.userLoginErr = "Invalid otp";
+//         res.render("user/otplogin", {
+//           loginErr: "Entered otp is invalid",
+//           otpsend,
+//         });
+//       }
+//     });
+// });
 
 //*******************************LOGIN POST***************************
 
