@@ -1149,7 +1149,7 @@ module.exports = {
 
       let walletData = {
         details: "Bonus from Referral",
-        referer: refData?.username,
+        referer: refData.username,
         date: new Date(),
         amount: 100,
       };
@@ -1169,7 +1169,7 @@ module.exports = {
       db.get()
         .collection("users")
         .updateOne(
-          { username: refData?.username },
+          { username: refData.username },
           {
             $inc: { wallet: 50 },
 
@@ -1349,7 +1349,7 @@ module.exports = {
           },
         ])
         .toArray();
-      resolve(userCount[0]?.count);
+      resolve(userCount[0].count);
     });
   },
 
