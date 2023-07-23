@@ -906,7 +906,7 @@ router.post("/coupon-check", verifyLogin, async (req, res) => {
   console.log(coup, "coup");
 
   console.log(total, "total");
-  let finalprice = total - (total / 100) * parseInt(coup?.data?.discount);
+  let finalprice = total - (total / 100) * parseInt(coup.data.discount);
   console.log((finalprice, "fiinalprice"));
   let discount = total - finalprice;
   let maxlimit = parseInt(coup.data.max);
