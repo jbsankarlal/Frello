@@ -1142,7 +1142,7 @@ module.exports = {
 
       let walletDataNew = {
         details: "Bonus from Referral",
-        referer: userRef?.username,
+        referer: userRef.username,
         date: new Date(),
         amount: 50,
       };
