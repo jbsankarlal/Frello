@@ -92,7 +92,7 @@
                                                     </li>
                                                     
                                                     <li class="w-icon">
-                                                        <a href="/add-to-wishlist/{{ this._id }}">
+                                                        <a onclick="addToWishlist('{{ this._id }}')">
                                                             <i class="icon_heart_alt"></i>
                                                         </a>
                                                     </li>
@@ -185,5 +185,45 @@
                     }
                 })
             }
+
+            function addToWishlist(pId){
+    $.ajax({
+        url:'/add-to-wishlist/'+pId,
+        method:'get',
+        success:(response)=>{
+            console.log(response,"kelloooo")
+            if(response.status==true || response.status==false){
+               let count=$('#wishlist-count').html()
+               count=parseInt(count)+1
+               $('#wishlist-count').html(count)
+            
+  Swal.fire({
+  position: 'top-end',
+  icon: 'success',
+  title: 'Item added to the Wishlist',
+  showConfirmButton: false,
+  timer: 1000
+})
+location.reload()
+            }
+            else{
+                Swal.fire({
+  title: 'Login to Continue?',
+  text: "",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#1bba09',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'LOGIN'
+}).then((result) => {
+  if (result.isConfirmed) {
+     location.href='/loggin'
+  }
+})
+               
+            }
+        }
+    })
+}    
         </script>
  

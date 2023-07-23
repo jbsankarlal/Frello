@@ -877,6 +877,8 @@ module.exports={
             item:ObjectId(pId),
            
         }
+            console.log(wishObj,"ororororo");
+
         return new Promise(async(resolve,reject)=>{
             console.log(userId,"userId==================>");
             let usercart= await db.get().collection('wishlist').findOne({user:ObjectId(userId)})
@@ -1004,14 +1006,14 @@ module.exports={
            
             let walletDataNew={
                 details:"Bonus from Referral",
-                referer:userRef.username,
+                referer:userRef?.username,
                 date: new Date(),
                 amount:50
             }
 
             let walletData={
                 details:"Bonus from Referral",
-                referer:refData.username,
+                referer:refData?.username,
                 date: new Date(),
                 amount:100
             }
@@ -1025,7 +1027,7 @@ module.exports={
                 })
                 console.log(refData.username,"refData.username");
                 
-           db.get().collection('users').updateOne({username:refData.username},{
+           db.get().collection('users').updateOne({username:refData?.username},{
             
                 $inc:{ wallet: 50 },
            

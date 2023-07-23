@@ -1,118 +1,114 @@
-var nameError = document.getElementById('name-info');
-var emailError = document.getElementById('email-info');
-var mobileNoError = document.getElementById('mobileNo-info');
-var passwordError = document.getElementById('password-info');
-var submitError =document.getElementById('submit-info')
+var nameError = document.getElementById("name-info");
+var emailError = document.getElementById("email-info");
+var mobileNoError = document.getElementById("mobileNo-info");
+var passwordError = document.getElementById("password-info");
+var submitError = document.getElementById("submit-info");
 
+function validateName() {
+  var name = document.getElementById("username").value;
 
-function validateName(){
-    var name = document.getElementById('username').value;
+  if (name.length == 0) {
+    nameError.innerHTML = "Username is required";
+    return false;
+  }
 
-    if(name.length == 0){
-
-        nameError.innerHTML = 'Username is required';
-        return false;
-
-    }
-
-    if(!name.match(/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/)){
-
-        nameError.innerHTML = 'Invalid Username';
-        return false;
-    }
-    else{
-    nameError.innerHTML = '' ;
-    return true ;
-    }
-}
-
-function validateEmail(){
-
-    var email = document.getElementById('email').value;
-
-    if(email.length == 0){
-        emailError.innerHTML = 'E-mail is required'
-        return false;
-    }
-
-    if(!email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
-
-        emailError.innerHTML = 'Invalid e-mail address'
-        return false;
-
-    }
-
-    emailError.innerHTML = '';
+  if (!name.match(/(^[a-zA-Z][a-zA-Z\s]{0,20}[a-zA-Z]$)/)) {
+    nameError.innerHTML = "Invalid Username";
+    return false;
+  } else {
+    nameError.innerHTML = "";
     return true;
+  }
 }
 
-function validateMobileNo(){
-    var phone = document.getElementById('mobileNo').value;
+function validateEmail() {
+  var email = document.getElementById("email").value;
 
-    if(phone.match(/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/)){
-        mobileNoError.innerHTML = 'Enter Only Digits';
-        return false;
-    }
+  if (email.length == 0) {
+    emailError.innerHTML = "E-mail is required";
+    return false;
+  }
 
-    if(phone.length == 0){
-        mobileNoError.innerHTML = 'Mobile Number required';
-        return false;
-    }
+  if (
+    !email.match(
+      /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    )
+  ) {
+    emailError.innerHTML = "Invalid e-mail address";
+    return false;
+  }
 
-    if(phone.length !== 10){
-
-        mobileNoError.innerHTML = 'Mobile Number should be ten digits'
-        return false;
-    }
-    
-    
-
-   
-
-    mobileNoError.innerHTML = '';
-        return true;
-    
-
+  emailError.innerHTML = "";
+  return true;
 }
 
+function validateMobileNo() {
+  var phone = document.getElementById("mobileNo").value;
 
+  if (phone.match(/^[0-9]{3}-[0-9]{4}-[0-9]{4}$/)) {
+    mobileNoError.innerHTML = "Enter Only Digits";
+    return false;
+  }
 
-function validatePassword(){
+  if (phone.length == 0) {
+    mobileNoError.innerHTML = "Mobile Number required";
+    return false;
+  }
 
-    var password = document.getElementById('password').value;
+  if (phone.length !== 10) {
+    mobileNoError.innerHTML = "Mobile Number should be ten digits";
+    return false;
+  }
 
-    if(password.length==0){
-        passwordError.innerHTML='Password is required'
-        return false;
-    }
-    var required = 4 ;
-    var left = required - password.length;
-
-    if(left>0){
-        passwordError.innerHTML = left + ' more characters required';
-        return false;
-    }
-
-    passwordError.innerHTML = '';
-    return true
-
+  mobileNoError.innerHTML = "";
+  return true;
 }
 
+function validatePassword() {
+  var password = document.getElementById("password").value;
 
-function validateForm(){
-    if(!validateName() && !validateEmail() && !validateMobileNo() && !validatePassword() ){
-        submitError.style.direction = 'block';
-        submitError.innerHTML = 'Please Fix the errors to Register'
-        event.preventDefault()
-        setTimeout(function(){submitError.style.display = 'none ';} , 3000)
-        return false;
-    }
+  if (password.length == 0) {
+    passwordError.innerHTML = "Password is required";
+    return false;
+  }
+  var required = 4;
+  var left = required - password.length;
 
-    else if(!validateName() || !validateEmail() || !validateMobileNo() || !validatePassword()){
-        submitError.style.direction = 'block';
-        submitError.innerHTML = 'Please Enter All Required Fields to Register'
-        event.preventDefault()
-        setTimeout(function(){submitError.style.display = 'none ';} , 3000)
-        return false; 
-    }
+  if (left > 0) {
+    passwordError.innerHTML = left + " more characters required";
+    return false;
+  }
+
+  passwordError.innerHTML = "";
+  return true;
+}
+
+function validateForm() {
+  if (
+    !validateName() &&
+    !validateEmail() &&
+    !validateMobileNo() &&
+    !validatePassword()
+  ) {
+    submitError.style.direction = "block";
+    submitError.innerHTML = "Please Fix the errors to Register";
+    event.preventDefault();
+    setTimeout(function () {
+      submitError.style.display = "none ";
+    }, 3000);
+    return false;
+  } else if (
+    !validateName() ||
+    !validateEmail() ||
+    !validateMobileNo() ||
+    !validatePassword()
+  ) {
+    submitError.style.direction = "block";
+    submitError.innerHTML = "Please Enter All Required Fields to Register";
+    event.preventDefault();
+    setTimeout(function () {
+      submitError.style.display = "none ";
+    }, 3000);
+    return false;
+  }
 }
